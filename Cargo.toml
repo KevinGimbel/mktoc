@@ -1,0 +1,9 @@
+[package]
+name = "mktoc"
+version = "1.0.0"
+authors = ["Kevin Gimbel <hallo@kevingimbel.com>"]
+edition = "2018"
+
+[dependencies]
+structopt = "0.3"
+regex = "1.3.1"
