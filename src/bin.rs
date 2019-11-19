@@ -10,15 +10,36 @@ struct Cli {
     write: bool,
 }
 
-fn main() -> std::io::Result<()> {
+fn handle_write(new_toc: String) {
     let opts = Cli::from_args();
-    let file = &opts.file.to_owned();
-    let res = mktoc::make_toc(file.to_string());
     if opts.write {
-        std::fs::write(file, res.as_bytes())?;
+        let res_write = std::fs::write(opts.file, new_toc.as_bytes());
+        match res_write {
+            Ok(_r) => {
+                std::process::exit(0);
+            }
+            Err(e) => {
+                eprintln!("Failed to write file. Error kind: {:?}", e.kind());
+                std::process::exit(1);
+            }
+        }
     } else {
-        println!("{}", res);
+        println!("{}", new_toc);
     }
+}
 
-    Ok(())
+fn main() {
+    let opts = Cli::from_args();
+    let res = mktoc::make_toc(opts.file.to_string());
+
+    match res {
+        Ok(new_toc) => {
+            handle_write(new_toc);
+            std::process::exit(0);
+        }
+        Err(e) => {
+            eprintln!("Error: {}", e);
+            std::process::exit(1);
+        }
+    };
 }

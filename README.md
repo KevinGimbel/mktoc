@@ -1,15 +1,15 @@
 # `mktoc`
-> 
+> Blazingly fast Table of Content generator
 
 <!-- BEGIN mktoc -->
 - [`mktoc`](#`mktoc`)
-- [About](#About)
-- [Installation](#Installation)
-  - [Cargo](#Cargo)
-  - [Binary](#Binary)
-- [Usage](#Usage)
-- [mktoc [--write] <FILE>](#mktoc-[--write]-<FILE>)
-- [Performance](#Performance)
+- [About](#about)
+- [Installation](#installation)
+  - [Cargo](#cargo)
+  - [Binary](#binary)
+- [Usage](#usage)
+- [mktoc [--write] <FILE>](#mktoc-[--write]-<file>)
+- [Performance](#performance)
 <!-- END mktoc -->
 
 ## About

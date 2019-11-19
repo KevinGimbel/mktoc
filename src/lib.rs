@@ -33,8 +33,8 @@ fn generate_toc(original_content: String) -> String {
         let level: usize = caps.get(2).unwrap().as_str().chars().count() - 1;
         let text = caps.get(3).unwrap().as_str();
         // @TODO: Use real URL encoding
-        let link = text.replace(" ", "-");
-        // let spaces = " ".repeat(level - 1);
+        let link = text.replace(" ", "-").to_ascii_lowercase();
+        // let spaces = " ".repeat(level -1);
         let spaces = match level {
             1 | 2 => String::from(""),
             3 => String::from("  "),
@@ -58,11 +58,13 @@ fn generate_toc(original_content: String) -> String {
     return new_toc;
 }
 
-pub fn make_toc(file_path_in: String) -> String {
-    let content = read_file(file_path_in).unwrap();
+pub fn make_toc(file_path_in: String) -> Result<String, ::std::io::Error> {
+    let content = read_file(file_path_in)?;
     let new_toc = generate_toc(content.to_owned());
     let re_toc = regex::Regex::new(r"(?ms)^(<!-- BEGIN mktoc).*(END mktoc -->)").unwrap();
-    let res = re_toc.replace_all(content.as_str(), new_toc.as_str());
+    let res: String = re_toc
+        .replace_all(content.as_str(), new_toc.as_str())
+        .into_owned();
 
-    return res.into_owned();
+    Ok(res)
 }
