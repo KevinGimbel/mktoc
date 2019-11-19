@@ -30,7 +30,7 @@ fn handle_write(new_toc: String) {
 
 fn main() {
     let opts = Cli::from_args();
-    let res = mktoc::make_toc(opts.file.to_string());
+    let res = mktoc::make_toc(opts.file);
 
     match res {
         Ok(new_toc) => {

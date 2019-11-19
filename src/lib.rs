@@ -55,7 +55,7 @@ fn generate_toc(original_content: String) -> String {
 
     new_toc = format!("{}\n{}", new_toc, COMMENT_END);
 
-    return new_toc;
+    new_toc
 }
 
 pub fn make_toc(file_path_in: String) -> Result<String, ::std::io::Error> {
