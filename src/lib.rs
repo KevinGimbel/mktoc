@@ -58,18 +58,11 @@ fn generate_toc(original_content: String) -> String {
     return new_toc;
 }
 
-fn main() -> std::io::Result<()> {
-    let opts = Cli::from_args();
-    let re_toc = regex::Regex::new(r"(?ms)^(<!-- BEGIN mktoc).*(END mktoc -->)").unwrap();
-    let content = read_file(opts.file.to_owned()).unwrap();
+pub fn make_toc(file_path_in: String) -> String {
+    let content = read_file(file_path_in).unwrap();
     let new_toc = generate_toc(content.to_owned());
+    let re_toc = regex::Regex::new(r"(?ms)^(<!-- BEGIN mktoc).*(END mktoc -->)").unwrap();
     let res = re_toc.replace_all(content.as_str(), new_toc.as_str());
 
-    if opts.write {
-        std::fs::write(opts.file, res.as_bytes())?;
-    } else {
-        println!("{}", res);
-    }
-
-    Ok(())
+    return res.into_owned();
 }
