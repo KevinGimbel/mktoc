@@ -1,5 +1,8 @@
 This README.md is taken from [https://github.com/sagiegurari/cargo-make/blob/master/README.md](https://github.com/sagiegurari/cargo-make/blob/master/README.md) as part of the complex README parsing test.
 
+<!-- BEGIN mktoc -->
+<!-- END mktoc -->
+
 # cargo-make
 
 [![crates.io](https://img.shields.io/crates/v/cargo-make.svg)](https://crates.io/crates/cargo-make) [![Build Status](https://travis-ci.org/sagiegurari/cargo-make.svg)](http://travis-ci.org/sagiegurari/cargo-make) [![Build status](https://ci.appveyor.com/api/projects/status/qxejm16vmt2uxs1p?svg=true)](https://ci.appveyor.com/project/sagiegurari/cargo-make) [![codecov](https://codecov.io/gh/sagiegurari/cargo-make/branch/master/graph/badge.svg)](https://codecov.io/gh/sagiegurari/cargo-make) [![license](https://img.shields.io/crates/l/cargo-make.svg)](https://github.com/sagiegurari/cargo-make/blob/master/LICENSE) [![downloads](https://img.shields.io/crates/d/cargo-make.svg)](https://crates.io/crates/cargo-make) [ ![Download](https://api.bintray.com/packages/sagiegurari/cargo-make/linux/images/download.svg) ](https://bintray.com/sagiegurari/cargo-make/linux/_latestVersion)<br>
