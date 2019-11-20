@@ -1,5 +1,7 @@
 [package]
 name = "mktoc"
+description = "Generate Table of Contents from Markdown files"
+license = "MIT"
 version = "1.0.0"
 authors = ["Kevin Gimbel <hallo@kevingimbel.com>"]
 edition = "2018"
