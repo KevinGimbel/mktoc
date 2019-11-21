@@ -1,6 +1,8 @@
 # `mktoc`
 > Blazingly fast Table of Content generator
 
+![](https://github.com/kevingimbel/mktoc/workflows/Clippy%20check/badge.svg)
+
 <!-- BEGIN mktoc -->
 - [`mktoc`](#`mktoc`)
 - [About](#about)
