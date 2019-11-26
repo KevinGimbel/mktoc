@@ -36,7 +36,6 @@ fn generate_toc(original_content: String) -> String {
         let link = text.replace(" ", "-").to_ascii_lowercase();
         // let spaces = " ".repeat(level -1);
         let spaces = match level {
-            1 | 2 => String::from(""),
             3 => String::from("  "),
             4 => String::from("    "),
             5 => String::from("      "),
