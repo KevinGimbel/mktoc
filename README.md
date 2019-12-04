@@ -4,14 +4,13 @@
 ![](https://github.com/kevingimbel/mktoc/workflows/Clippy%20check/badge.svg)
 
 <!-- BEGIN mktoc -->
-- [`mktoc`](#`mktoc`)
 - [About](#about)
 - [Installation](#installation)
   - [Cargo](#cargo)
   - [Binary](#binary)
 - [Usage](#usage)
-- [mktoc [--write] <FILE>](#mktoc-[--write]-<file>)
 - [Performance](#performance)
+- [License](#license)
 <!-- END mktoc -->
 
 ## About
