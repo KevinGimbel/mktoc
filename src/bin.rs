@@ -8,6 +8,12 @@ struct Cli {
 
     #[structopt(long, short)]
     write: bool,
+
+    #[structopt(long, short="m", default_value="1")]
+    min_depth: i32,
+
+    #[structopt(long, short="M", default_value="6")]
+    max_depth: i32,
 }
 
 fn handle_write(new_toc: String) {
@@ -30,7 +36,7 @@ fn handle_write(new_toc: String) {
 
 fn main() {
     let opts = Cli::from_args();
-    let res = mktoc::make_toc(opts.file);
+    let res = mktoc::make_toc(opts.file, opts.min_depth, opts.max_depth);
 
     match res {
         Ok(new_toc) => {
