@@ -1,5 +1,5 @@
 # `mktoc`
-> Blazingly fast Markdown Table of Content generator
+> Markdown Table of Content generator
 
 ![](https://github.com/kevingimbel/mktoc/workflows/Clippy%20check/badge.svg)
 
@@ -9,6 +9,7 @@
   - [Cargo](#cargo)
   - [Binary](#binary)
 - [Usage](#usage)
+  - [Update Markdown file](#update-markdown-file)
 - [Performance](#performance)
 - [License](#license)
 <!-- END mktoc -->
@@ -32,6 +33,16 @@ $ cargo install mktoc
 Binaries are actually not available yet. If you know how releasing binaries with Rust can be implemented, please let me know!
 
 ## Usage
+
+### Update Markdown file
+
+Add the following HTML comment into the Markdown file where the Table of Contents should be rendered. 
+```
+<!-- BEGIN mktoc -->
+<!-- END mktoc -->
+```
+
+Everything between those comments will be replaced!
 
 Specify `--write` to overwrite the given file, otherwise the modified content is written to stdout.
 

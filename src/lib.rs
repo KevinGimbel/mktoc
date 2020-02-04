@@ -1,18 +1,6 @@
 use std::fs::File;
 use std::io::prelude::*;
 
-use structopt::StructOpt;
-
-#[derive(StructOpt, Debug)]
-#[structopt(name = "mktoc")]
-struct Cli {
-    #[structopt()]
-    file: String,
-
-    #[structopt(long, short)]
-    write: bool,
-}
-
 const COMMENT_BEGIN: &str = "<!-- BEGIN mktoc -->";
 const COMMENT_END: &str = "<!-- END mktoc -->";
 
@@ -24,10 +12,25 @@ fn read_file(file_path: String) -> Result<String, ::std::io::Error> {
 
     Ok(contents)
 }
+
+fn text_to_url(text: &str) -> String {
+    text.trim()
+        .replace(" ", "-")
+        .replace("(", "")
+        .replace(")", "")
+        .replace("`", "")
+        .replace("'", "")
+        .replace("\"", "")
+        .replace("[", "")
+        .replace("]", "")
+        .replace("{", "")
+        .replace("}", "")
+        .to_ascii_lowercase()
+}
+
 /// parses a string and extracts all headlines to build a table of contents
 ///
-/// Uses basic regex "((#{1,6}\s))((.*))" to parse headings. Right now this produces errors because it also matches
-/// comments in code blocks and if the headline contains images those will be matched, too.
+/// Uses a basic regex "((#{1,6}\s))((.*))" to parse headings out of the
 pub fn generate_toc(original_content: String, min_depth: i32, max_depth: i32) -> String {
     let mut already_found_code_open = false;
     let mut code_block_found = false;
@@ -35,7 +38,8 @@ pub fn generate_toc(original_content: String, min_depth: i32, max_depth: i32) ->
     let re = regex::Regex::new(r"((#{1,6}\s))((.*))").unwrap();
     for line in original_content.lines() {
 
-        if line.starts_with("```") {
+        let line_s: String = line.chars().take(3).collect();
+        if  line_s == "```".to_owned() {
             code_block_found = true;
         }
 
@@ -51,9 +55,8 @@ pub fn generate_toc(original_content: String, min_depth: i32, max_depth: i32) ->
                     continue;
                 }
 
-
                 let text = caps.get(3).unwrap().as_str();
-                let link = text.replace(" ", "-").to_ascii_lowercase();
+                let link = text_to_url(text);
                 let spaces = match level {
                     3 => String::from("  "),
                     4 => String::from("    "),
@@ -61,6 +64,7 @@ pub fn generate_toc(original_content: String, min_depth: i32, max_depth: i32) ->
                     6 => String::from("        "),
                     _ => String::from(""),
                 };
+
                 new_toc = format!(
                     "{old}\n{spaces}- [{text}](#{link})",
                     old = new_toc.as_str(),
