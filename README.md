@@ -44,6 +44,8 @@ Add the following HTML comment into the Markdown file where the Table of Content
 
 Everything between those comments will be replaced!
 
+### Command line
+
 Specify `--write` to overwrite the given file, otherwise the modified content is written to stdout.
 
 ```
@@ -72,7 +74,27 @@ OPTIONS:
 ARGS:
     <file> 
 ```
- 
+
+### Environment configuration
+
+mktoc can be configured with environment variables, namely:
+
+- `MKTOC_MIN_DEPTH` equal to `-m`
+- `MKTOC_MAX_DEPTH` equal to `-M`
+
+Place these variables in a shell environment file such as `~/.bashrc` or
+`~/.zshrc`, then just run mktoc without `-m` and `-M`
+
+```sh
+# The following in ~/.bashrc configures mktoc to render headings from level 2 to
+# level 4
+# 
+# MKTOC_MIN_DEPTH=2
+# MKTOC_MAX_DEPTH=4
+
+$ mktoc --write README.md
+```
+
 ## Performance
 
 `mktoc` is fast but can probably be even faster! Pull Requests and bug reports are appreciated!

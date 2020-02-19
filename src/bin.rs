@@ -9,10 +9,10 @@ struct Cli {
     #[structopt(long, short)]
     write: bool,
 
-    #[structopt(long, short="m", default_value="1")]
+    #[structopt(long, short = "m", default_value = "1", env="MKTOC_MIN_DEPTH")]
     min_depth: i32,
 
-    #[structopt(long, short="M", default_value="6")]
+    #[structopt(long, short = "M", default_value = "6", env="MKTOC_MAX_DEPTH")]
     max_depth: i32,
 }
 

@@ -19,12 +19,35 @@ fn text_to_url(text: &str) -> String {
         .replace("(", "")
         .replace(")", "")
         .replace("`", "")
+        .replace("´", "")
         .replace("'", "")
         .replace("\"", "")
         .replace("[", "")
         .replace("]", "")
         .replace("{", "")
         .replace("}", "")
+        .replace("?", "")
+        .replace("¿", "")
+        .replace("!", "")
+        .replace("¡", "")
+        .replace(".", "")
+        .replace(",", "")
+        .replace("\\", "")
+        .replace("/", "")
+        .replace(":", "")
+        .replace(";", "")
+        .replace("§", "")
+        .replace("$", "")
+        .replace("%", "")
+        .replace("&", "")
+        .replace("=", "")
+        .replace("^", "")
+        .replace("°", "")
+        .replace("#", "")
+        .replace("+", "")
+        .replace("*", "")
+        .replace("<", "")
+        .replace(">", "")
         .to_ascii_lowercase()
 }
 
@@ -37,9 +60,8 @@ pub fn generate_toc(original_content: String, min_depth: i32, max_depth: i32) ->
     let mut new_toc = String::from(COMMENT_BEGIN);
     let re = regex::Regex::new(r"((#{1,6}\s))((.*))").unwrap();
     for line in original_content.lines() {
-
         let line_s: String = line.chars().take(3).collect();
-        if  line_s == "```".to_owned() {
+        if line_s == "```".to_owned() {
             code_block_found = true;
         }
 
@@ -83,7 +105,6 @@ pub fn generate_toc(original_content: String, min_depth: i32, max_depth: i32) ->
         if line.starts_with("```") {
             already_found_code_open = true;
         }
-
     }
 
     new_toc = format!("{}\n{}", new_toc, COMMENT_END);
@@ -92,7 +113,11 @@ pub fn generate_toc(original_content: String, min_depth: i32, max_depth: i32) ->
 }
 
 /// takes a file path as `String` and returns a table of contents for the file
-pub fn make_toc(file_path_in: String, min_depth: i32, max_depth: i32) -> Result<String, ::std::io::Error> {
+pub fn make_toc(
+    file_path_in: String,
+    min_depth: i32,
+    max_depth: i32,
+) -> Result<String, ::std::io::Error> {
     let content = read_file(file_path_in)?;
     let new_toc = generate_toc(content.to_owned(), min_depth, max_depth);
     let re_toc = regex::Regex::new(r"(?ms)^(<!-- BEGIN mktoc).*(END mktoc -->)").unwrap();
