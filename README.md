@@ -4,10 +4,49 @@
 ![](https://github.com/kevingimbel/mktoc/workflows/Clippy%20check/badge.svg)
 
 <!-- BEGIN mktoc -->
+- [About](#about)
+- [Installation](#installation)
+  - [Cargo](#cargo)
+  - [Binary](#binary)
+- [Usage](#usage)
+  - [Update Markdown file](#update-markdown-file)
   - [Command line](#command-line)
   - [Environment configuration](#environment-configuration)
 - [Performance](#performance)
 - [License](#license)
+<!-- END mktoc -->
+
+## About
+
+`mktoc` parses markdown files and generates a Table Of Content linking all headlines up to heading level 6 deep, or as specified by command line arguments. A start depth and maximum depth can be specified.
+
+## Installation
+
+`mktoc` can be installed using Cargo, the Rust package manager.
+
+### Cargo
+
+```sh
+$ cargo install mktoc
+```
+#### Update
+
+```
+$ cargo install --force mktoc
+```
+
+### Binary
+
+Binaries are actually not available yet. If you know how releasing binaries with Rust can be implemented, please let me know!
+
+## Usage
+
+### Update Markdown file
+
+Add the following HTML comment into the Markdown file where the Table of Contents should be rendered.
+
+```
+<!-- BEGIN mktoc -->
 <!-- END mktoc -->
 ```
 
