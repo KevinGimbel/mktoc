@@ -120,9 +120,10 @@ pub fn make_toc(
 ) -> Result<String, ::std::io::Error> {
     let content = read_file(file_path_in)?;
     let new_toc = generate_toc(content.to_owned(), min_depth, max_depth);
-    let re_toc = regex::Regex::new(r"(?ms)^(<!-- BEGIN mktoc).*(END mktoc -->)").unwrap();
+    let re_toc =
+        regex::Regex::new(r"(?ms)^(<!-- BEGIN mktoc -->)(.*?)(<!-- END mktoc -->)").unwrap();
     let res: String = re_toc
-        .replace_all(content.as_str(), new_toc.as_str())
+        .replacen(content.as_str(), 1, new_toc.as_str())
         .into_owned();
 
     Ok(res)
