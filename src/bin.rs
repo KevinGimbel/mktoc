@@ -3,22 +3,38 @@ use structopt::StructOpt;
 #[derive(StructOpt, Debug)]
 #[structopt(name = "mktoc")]
 struct Cli {
-    #[structopt()]
+    #[structopt(default_value = "README.md")]
     file: String,
 
-    #[structopt(long, short)]
-    write: bool,
+    #[structopt(
+        long,
+        short,
+        help = "If set will output to stdout instead of replacing content in file"
+    )]
+    stdout: bool,
 
-    #[structopt(long, short = "m", default_value = "1", env="MKTOC_MIN_DEPTH")]
+    #[structopt(
+        long,
+        short = "m",
+        default_value = "1",
+        env = "MKTOC_MIN_DEPTH",
+        help = "Minimum heading level"
+    )]
     min_depth: i32,
 
-    #[structopt(long, short = "M", default_value = "6", env="MKTOC_MAX_DEPTH")]
+    #[structopt(
+        long,
+        short = "M",
+        default_value = "6",
+        env = "MKTOC_MAX_DEPTH",
+        help = "Maximum heading level"
+    )]
     max_depth: i32,
 }
 
 fn handle_write(new_toc: String) {
     let opts = Cli::from_args();
-    if opts.write {
+    if !opts.stdout {
         let res_write = std::fs::write(opts.file, new_toc.as_bytes());
         match res_write {
             Ok(_r) => {
