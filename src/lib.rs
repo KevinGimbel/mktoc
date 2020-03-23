@@ -67,8 +67,14 @@ pub fn generate_toc(original_content: String, min_depth: i32, max_depth: i32) ->
 
         if !code_block_found && !already_found_code_open {
             if line.starts_with("#") {
-                let caps = re.captures(line).unwrap();
+                // Check if the regex matches, if it doesn't continue skip (continue) the loop.
+                let caps = match re.captures(line) {
+                    Some(matched) => matched,
+                    None => { continue; }
+                };
+                
                 let level: i32 = (caps.get(2).unwrap().as_str().chars().count() - 1) as i32;
+                
                 if level < min_depth {
                     continue;
                 }
