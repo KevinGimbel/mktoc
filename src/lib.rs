@@ -1,3 +1,4 @@
+use std::path::Path;
 use std::fs::File;
 use std::io::prelude::*;
 
@@ -5,7 +6,9 @@ const COMMENT_BEGIN: &str = "<!-- BEGIN mktoc -->";
 const COMMENT_END: &str = "<!-- END mktoc -->";
 
 /// reads a file into a mutable string
-fn read_file(file_path: String) -> Result<String, ::std::io::Error> {
+fn read_file<P>(file_path: P) -> Result<String, ::std::io::Error>
+    where P: AsRef<Path>
+{
     let mut file = File::open(file_path)?;
     let mut contents = String::new();
     file.read_to_string(&mut contents)?;
@@ -119,11 +122,14 @@ pub fn generate_toc(original_content: String, min_depth: i32, max_depth: i32) ->
 }
 
 /// takes a file path as `String` and returns a table of contents for the file
-pub fn make_toc(
-    file_path_in: String,
+pub fn make_toc<P>(
+    file_path_in: P,
     min_depth: i32,
     max_depth: i32,
-) -> Result<String, ::std::io::Error> {
+)
+    -> Result<String, ::std::io::Error>
+    where P: AsRef<Path>
+{
     let content = read_file(file_path_in)?;
     let new_toc = generate_toc(content.to_owned(), min_depth, max_depth);
     let re_toc =
