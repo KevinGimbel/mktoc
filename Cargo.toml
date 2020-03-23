@@ -5,6 +5,7 @@ license = "MIT"
 version = "2.2.0"
 authors = ["Kevin Gimbel <hallo@kevingimbel.com>"]
 edition = "2018"
+repository = "https://github.com/kevingimbel/mktoc"
 
 [lib]
 name = "mktoc"
