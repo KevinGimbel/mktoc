@@ -12,6 +12,7 @@
   - [Update Markdown file](#update-markdown-file)
   - [Command line](#command-line)
   - [Environment configuration](#environment-configuration)
+- [Auto-run with VSCode](#auto-run-with-vscode)
 - [Performance](#performance)
 - [License](#license)
 <!-- END mktoc -->
@@ -105,6 +106,25 @@ Place these variables in a shell environment file such as `~/.bashrc` or
 
 $ mktoc README.md
 ```
+
+## Auto-run with VSCode
+
+For VSCode the [Run on save](https://github.com/emeraldwalk/vscode-runonsave) extension can be used to trigger mktoc.
+
+Install the extension and then add the following config to workspace or user `settings.json`.
+
+```json
+"emeraldwalk.runonsave": {
+    "commands": [
+        {
+            "match": "\\.md$",
+            "cmd": "mktoc ${file}"
+        }
+    ]
+}
+```
+
+This will run the command for every markdown file on safe. If there is no mktoc comment in the Markdown file nothing happens.
 
 ## Performance
 
