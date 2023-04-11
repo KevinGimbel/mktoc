@@ -1,9 +1,26 @@
 use std::path::Path;
 use std::fs::File;
 use std::io::prelude::*;
+use regex::Regex;
+use serde::{Deserialize, Serialize};
 
 const COMMENT_BEGIN: &str = "<!-- BEGIN mktoc -->";
 const COMMENT_END: &str = "<!-- END mktoc -->";
+
+#[derive(Debug, Deserialize, Serialize)]
+struct Config {
+    #[serde(default = "default_min_depth")]
+    min_depth: i32,
+    #[serde(default = "default_max_depth")]
+    max_depth: i32,
+}
+
+fn default_min_depth() -> i32 {
+    1
+}
+fn default_max_depth() -> i32 {
+    6
+}
 
 /// reads a file into a mutable string
 fn read_file<P>(file_path: P) -> Result<String, ::std::io::Error>
@@ -131,12 +148,45 @@ pub fn make_toc<P>(
     where P: AsRef<Path>
 {
     let content = read_file(file_path_in)?;
-    let new_toc = generate_toc(content.to_owned(), min_depth, max_depth);
+    let re = Regex::new(r"<!--\s*BEGIN mktoc\s*(?P<json>\{.*\})\s*-->").unwrap();
+
+    // extract the JSON string from the comment
+    let json_str = match re.captures(&content) {
+        Some(captures) => captures.name("json").unwrap().as_str(),
+        None => {
+            return Ok("{}".into());
+        }
+    };
+
+    // parse the JSON string as a Config struct
+    let config: Config = match serde_json::from_str(json_str) {
+        Ok(config) => config,
+        Err(e) => {
+            return Err(e.into());
+        }
+    };
+
+    // Read min and max depth values, config from the file itself takes 
+    // priority over CLI args or environment values.
+    let min_depth_value = match Some(config.min_depth) {
+        Some(_value) => config.min_depth,
+        None => min_depth
+    };
+
+    let max_depth_value = match Some(config.max_depth) {
+        Some(_value) => config.max_depth,
+        None => max_depth
+    };
+    
+    let new_toc = generate_toc(content.to_owned(), min_depth_value, max_depth_value);
+    
     let re_toc =
-        regex::Regex::new(r"(?ms)^(<!-- BEGIN mktoc -->)(.*?)(<!-- END mktoc -->)").unwrap();
+        Regex::new(r"(?ms)^(<!--\s*BEGIN mktoc\s*(?P<json>\{.*\})\s*-->)(.*?)(<!-- END mktoc -->)").unwrap();
     let res: String = re_toc
         .replacen(content.as_str(), 1, new_toc.as_str())
         .into_owned();
+
+    println!("config: {:?}", config);
 
     Ok(res)
 }
