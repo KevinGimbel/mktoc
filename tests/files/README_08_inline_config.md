@@ -1,6 +1,6 @@
 # Inline config
 
-<!-- BEGIN mktoc {"min_depth":1,"max_depth":6} -->
+<!-- BEGIN mktoc {"min_depth":4,"max_depth":6} -->
   - [NEW!](#new)
 <!-- END mktoc -->
 

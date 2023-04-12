@@ -74,10 +74,10 @@ fn text_to_url(text: &str) -> String {
 /// parses a string and extracts all headlines to build a table of contents
 ///
 /// Uses a basic regex "((#{1,6}\s))((.*))" to parse headings out of the
-pub fn generate_toc(original_content: String, min_depth: i32, max_depth: i32) -> String {
+pub fn generate_toc(original_content: String, min_depth: i32, max_depth: i32, start_comment: String) -> String {
     let mut already_found_code_open = false;
     let mut code_block_found = false;
-    let mut new_toc = String::from(COMMENT_BEGIN);
+    let mut new_toc = start_comment;
     let re = regex::Regex::new(r"((#{1,6}\s))((.*))").unwrap();
     for line in original_content.lines() {
         let line_s: String = line.chars().take(3).collect();
@@ -149,7 +149,7 @@ pub fn make_toc<P>(
 {
     let content = read_file(file_path_in)?;
     let re = Regex::new(r"<!--\s*BEGIN mktoc\s*(?P<json>\{.*\})\s*-->").unwrap();
-
+    let mut start_comment = COMMENT_BEGIN.to_string();
     // extract the JSON string from the comment
     let json_str = match re.captures(&content) {
         Some(captures) => captures.name("json").unwrap().as_str(),
@@ -157,6 +157,11 @@ pub fn make_toc<P>(
             return Ok("{}".into());
         }
     };
+
+    // if a json config is found it will be injected into the start comment.
+    if !json_str.is_empty() {
+        start_comment = format!("<!-- BEGIN mktoc {} -->", json_str);
+    }
 
     // parse the JSON string as a Config struct
     let config: Config = match serde_json::from_str(json_str) {
@@ -178,7 +183,7 @@ pub fn make_toc<P>(
         None => max_depth
     };
     
-    let new_toc = generate_toc(content.to_owned(), min_depth_value, max_depth_value);
+    let new_toc = generate_toc(content.to_owned(), min_depth_value, max_depth_value, start_comment);
     
     let re_toc =
         Regex::new(r"(?ms)^(<!--\s*BEGIN mktoc\s*(?P<json>\{.*\})\s*-->)(.*?)(<!-- END mktoc -->)").unwrap();
