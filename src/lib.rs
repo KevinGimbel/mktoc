@@ -15,6 +15,12 @@ struct Config {
     max_depth: i32,
 }
 
+impl Default for Config {
+    fn default() -> Self {
+        Self { min_depth: default_min_depth(), max_depth: default_max_depth() }
+    }
+}
+
 fn default_min_depth() -> i32 {
     1
 }
@@ -138,24 +144,12 @@ pub fn generate_toc(original_content: String, min_depth: i32, max_depth: i32, st
     new_toc
 }
 
-/// takes a file path as `String` and returns a table of contents for the file
-pub fn make_toc<P>(
-    file_path_in: P,
-    min_depth: i32,
-    max_depth: i32,
-)
-    -> Result<String, ::std::io::Error>
-    where P: AsRef<Path>
-{
-    let content = read_file(file_path_in)?;
-    let re = Regex::new(r"<!--\s*BEGIN mktoc\s*(?P<json>\{.*\})\s*-->").unwrap();
+fn parse_json_config_and_begin_comment<'t>(text: &'t str) -> (Config, String) {
     let mut start_comment = COMMENT_BEGIN.to_string();
-    // extract the JSON string from the comment
-    let json_str = match re.captures(&content) {
+    let re = Regex::new(r"<!--\s*BEGIN mktoc\s*(?P<json>\{.*\})\s*-->").unwrap();
+    let json_str = match re.captures(&text) {
         Some(captures) => captures.name("json").unwrap().as_str(),
-        None => {
-            return Ok("{}".into());
-        }
+        None => { "" }
     };
 
     // if a json config is found it will be injected into the start comment.
@@ -166,10 +160,24 @@ pub fn make_toc<P>(
     // parse the JSON string as a Config struct
     let config: Config = match serde_json::from_str(json_str) {
         Ok(config) => config,
-        Err(e) => {
-            return Err(e.into());
-        }
+        Err(_e) => { Config::default() }
     };
+
+    return (config, start_comment)
+}
+
+/// takes a file path as `String` and returns a table of contents for the file
+pub fn make_toc<P>(
+    file_path_in: P,
+    min_depth: i32,
+    max_depth: i32,
+)
+    -> Result<String, ::std::io::Error>
+    where P: AsRef<Path>
+{
+    let content = read_file(file_path_in)?;
+    // extract the JSON string from the comment
+    let (config, start_comment) = parse_json_config_and_begin_comment(&content);
 
     // Read min and max depth values, config from the file itself takes 
     // priority over CLI args or environment values.
@@ -191,7 +199,34 @@ pub fn make_toc<P>(
         .replacen(content.as_str(), 1, new_toc.as_str())
         .into_owned();
 
-    println!("config: {:?}", config);
-
     Ok(res)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_parse_json_config_and_begin_comment() {
+        struct TestCase<'a> {
+            input: &'a str,
+            expected: Config,
+        }
+
+        let tests = vec![TestCase{
+            input: "<!-- BEGIN mktoc {\"min_depth\":3} -->",
+            expected: Config{
+                min_depth: 3,
+                max_depth: 6
+            }
+        }];
+
+        for test in tests {
+            let (cnf, comment) = parse_json_config_and_begin_comment(&test.input);
+            assert_eq!(cnf.max_depth, test.expected.max_depth);
+            assert_eq!(cnf.min_depth, test.expected.min_depth);
+            assert_eq!(comment, test.input.to_string())
+        }
+
+    }
 }
