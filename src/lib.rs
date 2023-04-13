@@ -182,7 +182,8 @@ fn parse_json_config_and_begin_comment<'t>(text: &'t str) -> (Config, String) {
     // ensures the min_depth and max_depth are within scope
     config.ensure_min_max();
 
-    return (config, start_comment)
+    
+    (config, start_comment)
 }
 
 /// takes a file path as `String` and returns a table of contents for the file
