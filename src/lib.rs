@@ -21,12 +21,12 @@ impl Config {
     fn ensure_min_max(&mut self) {
         if (self.max_depth > 6) || (self.max_depth < 1)  {
              self.max_depth = default_max_depth();
-             eprintln!("WARNING: max_depthout of boound. Default value '{}' used.", self.max_depth);
+             eprintln!("WARNING: max_depth out of bound. Default value '{}' used.", self.max_depth);
         }
         
         if (self.min_depth < 1) || (self.min_depth > 6)  {
             self.min_depth = default_min_depth();
-            eprintln!("WARNING: min_depthout of boound. Default value '{}' used.", self.min_depth);
+            eprintln!("WARNING: min_depth out of bound. Default value '{}' used.", self.min_depth);
         }
     }
 }
