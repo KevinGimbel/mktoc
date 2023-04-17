@@ -327,6 +327,5 @@ mod tests {
             assert_eq!(cnf.min_depth, test.expected.min_depth);
             assert_eq!(comment, test.input.to_string())
         }
-
     }
 }

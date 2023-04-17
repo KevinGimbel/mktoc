@@ -10,18 +10,24 @@
   - [Binary](#binary)
 - [Usage](#usage)
   - [Update Markdown file](#update-markdown-file)
+    - [Inline config](#inline-config)
   - [Command line](#command-line)
   - [Environment configuration](#environment-configuration)
 - [Auto-run with VSCode](#auto-run-with-vscode)
 - [Performance](#performance)
+- [Contributing](#contributing)
+  - [Where to start?](#where-to-start)
+  - [Tooling](#tooling)
 - [License](#license)
 <!-- END mktoc -->
 
 ## About
+[⬆️ Back to Top](#table-of-contents)
 
 `mktoc` parses markdown files and generates a Table Of Content linking all headlines up to heading level 6 deep, or as specified by command line arguments. A start depth and maximum depth can be specified.
 
 ## Installation
+[⬆️ Back to Top](#table-of-contents)
 
 `mktoc` can be installed using Cargo, the Rust package manager.
 
@@ -31,7 +37,6 @@
 $ cargo install mktoc
 ```
 #### Update
-
 ```
 $ cargo install --force mktoc
 ```
@@ -43,6 +48,7 @@ Binaries are actually not available yet. If you know how releasing binaries with
 ## Usage
 
 ### Update Markdown file
+[⬆️ Back to Top](#table-of-contents)
 
 Add the following HTML comment into the Markdown file where the Table of Contents should be rendered.
 
@@ -53,7 +59,22 @@ Add the following HTML comment into the Markdown file where the Table of Content
 
 Everything between those comments will be replaced!
 
+#### Inline config
+[⬆️ Back to Top](#table-of-contents)
+
+Starting with version 0.3 it's possible to set values in-line which is great when collaborating with teams who may have individual settings.
+
+```
+<!-- BEGIN mktoc {"min_depth": 2, "max_depth": 4} -->
+<!-- END mktoc -->
+```
+
+this is equal to running `mktoc -m 2 -M 4` or setting these environment variables `MKTOC_MIN_DEPTH=2` and `MKTOC_MAX_DEPTH=4`.
+
+Inline config takes priority over environment or CLI arguments.
+
 ### Command line
+[⬆️ Back to Top](#table-of-contents)
 
 Specify `--stdout` or `-s` to output generated content to `stdout` instead of overwriting file. By default the specified file will be overwritten.
 
@@ -88,6 +109,7 @@ ARGS:
 ```
 
 ### Environment configuration
+[⬆️ Back to Top](#table-of-contents)
 
 mktoc can be configured with environment variables, namely:
 
@@ -108,6 +130,7 @@ $ mktoc README.md
 ```
 
 ## Auto-run with VSCode
+[⬆️ Back to Top](#table-of-contents)
 
 For VSCode the [Run on save](https://github.com/emeraldwalk/vscode-runonsave) extension can be used to trigger mktoc.
 
@@ -127,9 +150,29 @@ Install the extension and then add the following config to workspace or user `se
 This will run the command for every markdown file on safe. If there is no mktoc comment in the Markdown file nothing happens.
 
 ## Performance
+[⬆️ Back to Top](#table-of-contents)
 
 `mktoc` is fast but can probably be even faster! Pull Requests and bug reports are appreciated!
 
+## Contributing
+[⬆️ Back to Top](#table-of-contents)
+
+We love and welcome every form of contribution.
+
+### Where to start?
+
+Here are some good places to start:
+
+* Issues with label [Good first issue](https://github.com/kevingimbel/mktoc/labels/good%20first%20issue)
+* Issues with label [Documentation](https://github.com/kevingimbel/mktoc/labels/documentation)
+* Providing example implementations or usage demos
+
+### Tooling
+
+- [mktoc](https://github.com/KevinGimbel/mktoc) is used for table of content generation in the README.md (neat!)
+- [criterion](https://github.com/bheisler/criterion.rs) for benchmarking
+
 ## License
+[⬆️ Back to Top](#table-of-contents)
 
 MIT, see LICENSE file.
