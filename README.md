@@ -65,7 +65,7 @@ Everything between those comments will be replaced!
 #### Inline config
 [⬆️ Back to Top](#table-of-contents)
 
-Starting with version 0.3 it's possible to set values in-line which is great when collaborating with teams who may have individual settings.
+Starting with version 3.0.0 it's possible to set values in-line which is great when collaborating with teams who may have individual settings.
 
 ```html
 <!-- BEGIN mktoc {"min_depth": 2, "max_depth": 4} -->
