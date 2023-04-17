@@ -3,6 +3,7 @@
 
 ![](https://github.com/kevingimbel/mktoc/workflows/Clippy%20check/badge.svg)
 
+# Table of Contents
 <!-- BEGIN mktoc -->
 - [About](#about)
 - [Installation](#installation)
