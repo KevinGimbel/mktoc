@@ -25,7 +25,7 @@
 ## About
 [⬆️ Back to Top](#table-of-contents)
 
-`mktoc` parses markdown files and generates a Table Of Content linking all headlines up to heading level 6 deep, or as specified by command line arguments. A start depth and maximum depth can be specified.
+`mktoc` parses markdown files and generates a Table Of Content linking all headlines up to heading level 6 deep, or as specified by command line arguments, environment variables, or inline JSON config (see [Usage](#usage)).
 
 ## Installation
 [⬆️ Back to Top](#table-of-contents)
@@ -34,17 +34,19 @@
 
 ### Cargo
 
+**Installation**
 ```sh
 $ cargo install mktoc
 ```
-#### Update
-```
+
+**Update**
+```sh
 $ cargo install --force mktoc
 ```
 
 ### Binary
 
-Binaries are actually not available yet. If you know how releasing binaries with Rust can be implemented, please let me know!
+Binaries are not available yet. If you know how releasing binaries with Rust can be implemented, please let me know!
 
 ## Usage
 
@@ -53,7 +55,7 @@ Binaries are actually not available yet. If you know how releasing binaries with
 
 Add the following HTML comment into the Markdown file where the Table of Contents should be rendered.
 
-```
+```html
 <!-- BEGIN mktoc -->
 <!-- END mktoc -->
 ```
@@ -65,7 +67,7 @@ Everything between those comments will be replaced!
 
 Starting with version 0.3 it's possible to set values in-line which is great when collaborating with teams who may have individual settings.
 
-```
+```html
 <!-- BEGIN mktoc {"min_depth": 2, "max_depth": 4} -->
 <!-- END mktoc -->
 ```
@@ -79,7 +81,7 @@ Inline config takes priority over environment or CLI arguments.
 
 Specify `--stdout` or `-s` to output generated content to `stdout` instead of overwriting file. By default the specified file will be overwritten.
 
-```
+```sh
 # mktoc [FLAGS] [OPTIONS] [file] 
 $ mktoc -s README.md
 $ mktoc -m 2 -M 4 README.md
@@ -90,7 +92,7 @@ used.
 
 See `mktoc --help` for list of all arguments and flags.
 
-```
+```sh
 mktoc
 
 USAGE:
@@ -121,7 +123,7 @@ Place these variables in a shell environment file such as `~/.bashrc` or
 `~/.zshrc`, then just run mktoc without `-m` and `-M`
 
 ```sh
-# The following in ~/.bashrc configures mktoc to render headings from level 2 to
+# The following in ~/.bashrc|~/.zshrc configures mktoc to render headings from level 2 to
 # level 4
 # 
 # MKTOC_MIN_DEPTH=2
