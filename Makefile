@@ -1,13 +1,11 @@
+.DEFAULT_GOAL:=help
 .PHONY = bench build docs
 
-bench:
+help:	## Show this help.
+	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
+
+bench:	## Run benchmarks with criterion
 	@cargo bench
-build:
+
+build:	## Run cargo build with --release flag to build the binary
 	@cargo build --release
-
-docs:
-	@cargo doc
-
-frontend:
-	@cp -r ./target/criterion docs/benches/
-	@cp -r ./target/doc docs/
