@@ -271,9 +271,7 @@ mod tests {
             input: "<!-- BEGIN mktoc {\"min_depth\":3} -->",
             expected: Config{
                 min_depth: 3,
-                max_depth: 6,
-                wrap_in_details: false,
-                start_comment: String::from(""),
+                ..Default::default()
             }
         },
         TestCase{
@@ -282,38 +280,28 @@ mod tests {
             expected: Config{
                 min_depth: 3,
                 max_depth: 4,
-                wrap_in_details: false,
-                start_comment: String::from(""),
+                ..Default::default()
             }
         },
         TestCase{
             name: "only max_depth set",
             input: "<!-- BEGIN mktoc {\"max_depth\":4} -->",
             expected: Config{
-                min_depth: 1,
                 max_depth: 4,
-                wrap_in_details: false,
-                start_comment: String::from(""),
+                ..Default::default()
             }
         },
         TestCase{
             name: "no json config, returns default values",
             input: "<!-- BEGIN mktoc -->",
-            expected: Config{
-                min_depth: 1,
-                max_depth: 6,
-                wrap_in_details: false,
-                start_comment: String::from(""),
-            }
+            expected: Config::default()
         },
         TestCase{
             name: "invalid max_depth set results in default max_depth being used",
             input: "<!-- BEGIN mktoc {\"max_depth\":10} -->",
             expected: Config{
-                min_depth: 1,
                 max_depth: 6,
-                wrap_in_details: false,
-                start_comment: String::from(""),
+                ..Default::default()
             }
         },
         ];
@@ -321,10 +309,10 @@ mod tests {
         for test in tests {
             // logs the name of the test in case it fails.
             dbg!(test.name);
-            let cnf = parse_json_config(&test.input);
+            let (cnf, _json_config_found) = parse_json_config(&test.input);
             assert_eq!(cnf.max_depth, test.expected.max_depth);
             assert_eq!(cnf.min_depth, test.expected.min_depth);
-            assert_eq!(cnf.start_comment, test.input.to_string())
+            assert_eq!(cnf.start_comment, test.input.to_string());
         }
     }
 }
