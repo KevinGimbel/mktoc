@@ -1,3 +1,4 @@
+use mktoc::Config;
 use structopt::StructOpt;
 
 #[derive(StructOpt, Debug)]
@@ -52,7 +53,12 @@ fn handle_write(new_toc: String) {
 
 fn main() {
     let opts = Cli::from_args();
-    let res = mktoc::make_toc(opts.file, opts.min_depth, opts.max_depth);
+    // create config and assign values from CLI
+    let mut cnf: Config = Config::default();
+    cnf.max_depth = opts.max_depth;
+    cnf.min_depth = opts.min_depth;
+
+    let res = mktoc::make_toc(opts.file, cnf);
 
     match res {
         Ok(new_toc) => {
