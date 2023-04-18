@@ -61,39 +61,7 @@ fn read_file<P>(file_path: P) -> Result<String, ::std::io::Error>
 
 fn text_to_url(text: &str) -> String {
     text.trim()
-        .replace(' ', "-")
-        .replace('(', "")
-        .replace(')', "")
-        .replace('`', "")
-        .replace('´', "")
-        .replace('\'', "")
-        .replace('"', "")
-        .replace('[', "")
-        .replace(']', "")
-        .replace('{', "")
-        .replace('}', "")
-        .replace('?', "")
-        .replace('¿', "")
-        .replace('!', "")
-        .replace('¡', "")
-        .replace('.', "")
-        .replace(',', "")
-        .replace('\\', "")
-        .replace('/', "")
-        .replace(':', "")
-        .replace(';', "")
-        .replace('§', "")
-        .replace('$', "")
-        .replace('%', "")
-        .replace('&', "")
-        .replace('=', "")
-        .replace('^', "")
-        .replace('°', "")
-        .replace('#', "")
-        .replace('+', "")
-        .replace('*', "")
-        .replace('<', "")
-        .replace('>', "")
+        .replace(['(', ')', '`', '´', '\'', '"', '[', ']', '{', '}', '?', '¿', '!', '¡', '.', ',', '\\', '/', ':', ';', '§', '$', '%', '&', '=', '^', '°', '#', '+', '*', '<', '>'], "")
         .to_ascii_lowercase()
 }
 
@@ -107,12 +75,11 @@ pub fn generate_toc(original_content: String, config: Config) -> String {
     let re = regex::Regex::new(r"((#{1,6}\s))((.*))").unwrap();
     for line in original_content.lines() {
         let line_s: String = line.chars().take(3).collect();
-        if line_s == "```".to_owned() {
+        if line_s == *"```" {
             code_block_found = true;
         }
 
-        if !code_block_found && !already_found_code_open {
-            if line.starts_with("#") {
+        if !code_block_found && !already_found_code_open && line.starts_with('#') {
                 // Check if the regex matches, if it doesn't continue skip (continue) the loop.
                 let caps = match re.captures(line) {
                     Some(matched) => matched,
@@ -146,7 +113,6 @@ pub fn generate_toc(original_content: String, config: Config) -> String {
                     text = text,
                     link = link
                 );
-            }
         }
 
         if code_block_found && already_found_code_open {
@@ -161,9 +127,9 @@ pub fn generate_toc(original_content: String, config: Config) -> String {
 
     if config.wrap_in_details {
         let new_toc_content = cleanup_wrapped_toc(new_toc);
-        new_toc = format!("{}\n<details><summary>Table of Contents</summary>\n{}\n\n</details>\n{}\n",config.start_comment.to_string(), new_toc_content, COMMENT_END);
+        new_toc = format!("{}\n<details><summary>Table of Contents</summary>\n{}\n\n</details>\n{}\n",config.start_comment, new_toc_content, COMMENT_END);
     } else {
-        new_toc = format!("{}\n{}\n{}", config.start_comment.to_string(), new_toc, COMMENT_END);
+        new_toc = format!("{}\n{}\n{}", config.start_comment, new_toc, COMMENT_END);
     }
 
 
@@ -179,11 +145,11 @@ fn cleanup_wrapped_toc(input: String) -> String {
     new_content
 }
 
-fn parse_json_config<'t>(text: &'t str) -> (Config, bool) {
+fn parse_json_config(text: &str) -> (Config, bool) {
     let mut json_config_found = false;
     let mut start_comment = COMMENT_BEGIN.to_string();
     let re = Regex::new(r"<!--\s*BEGIN mktoc\s*(?P<json>\{.*\})\s*-->").unwrap();
-    let json_str = match re.captures(&text) {
+    let json_str = match re.captures(text) {
         Some(captures) => captures.name("json").unwrap().as_str(),
         None => { "" }
     };
@@ -206,7 +172,7 @@ fn parse_json_config<'t>(text: &'t str) -> (Config, bool) {
     // ensures the min_depth and max_depth are within scope
     config.ensure_min_max();
     // assign start comment
-    config.start_comment = String::from(start_comment);
+    config.start_comment = start_comment;
     
     (config, json_config_found)
 }
@@ -217,7 +183,8 @@ fn parse_json_config_or_use_provided(content: &str, cnf: Config) -> Config {
     if json_config_found {
         return json_config;
     }
-    return cnf;
+    
+    cnf
 }
 
 /// takes a file path as `String` and returns a table of contents for the file
