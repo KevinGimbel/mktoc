@@ -54,9 +54,7 @@ fn handle_write(new_toc: String) {
 fn main() {
     let opts = Cli::from_args();
     // create config and assign values from CLI
-    let mut cnf: Config = Config::default();
-    cnf.max_depth = opts.max_depth;
-    cnf.min_depth = opts.min_depth;
+    let cnf: Config = Config{max_depth: opts.max_depth, min_depth: opts.min_depth, ..Default::default() };
 
     let res = mktoc::make_toc(opts.file, cnf);
 
