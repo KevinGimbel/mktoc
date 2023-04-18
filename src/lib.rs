@@ -266,44 +266,44 @@ mod tests {
         }
 
         let tests = vec![
-        TestCase{
-            name: "only min_depth set",
-            input: "<!-- BEGIN mktoc {\"min_depth\":3} -->",
-            expected: Config{
-                min_depth: 3,
-                ..Default::default()
-            }
-        },
-        TestCase{
-            name: "min_depth and max_depth set",
-            input: "<!-- BEGIN mktoc {\"min_depth\":3, \"max_depth\":4} -->",
-            expected: Config{
-                min_depth: 3,
-                max_depth: 4,
-                ..Default::default()
-            }
-        },
-        TestCase{
-            name: "only max_depth set",
-            input: "<!-- BEGIN mktoc {\"max_depth\":4} -->",
-            expected: Config{
-                max_depth: 4,
-                ..Default::default()
-            }
-        },
-        TestCase{
-            name: "no json config, returns default values",
-            input: "<!-- BEGIN mktoc -->",
-            expected: Config::default()
-        },
-        TestCase{
-            name: "invalid max_depth set results in default max_depth being used",
-            input: "<!-- BEGIN mktoc {\"max_depth\":10} -->",
-            expected: Config{
-                max_depth: 6,
-                ..Default::default()
-            }
-        },
+            TestCase{
+                name: "only min_depth set",
+                input: "<!-- BEGIN mktoc {\"min_depth\":3} -->",
+                expected: Config{
+                    min_depth: 3,
+                    ..Default::default()
+                }
+            },
+            TestCase{
+                name: "min_depth and max_depth set",
+                input: "<!-- BEGIN mktoc {\"min_depth\":3, \"max_depth\":4} -->",
+                expected: Config{
+                    min_depth: 3,
+                    max_depth: 4,
+                    ..Default::default()
+                }
+            },
+            TestCase{
+                name: "only max_depth set",
+                input: "<!-- BEGIN mktoc {\"max_depth\":4} -->",
+                expected: Config{
+                    max_depth: 4,
+                    ..Default::default()
+                }
+            },
+            TestCase{
+                name: "no json config, returns default values",
+                input: "<!-- BEGIN mktoc -->",
+                expected: Config::default()
+            },
+            TestCase{
+                name: "invalid max_depth set results in default max_depth being used",
+                input: "<!-- BEGIN mktoc {\"max_depth\":10} -->",
+                expected: Config{
+                    max_depth: 6,
+                    ..Default::default()
+                }
+            },
         ];
 
         for test in tests {
