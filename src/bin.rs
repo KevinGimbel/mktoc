@@ -1,41 +1,27 @@
-use structopt::StructOpt;
+use clap::Parser;
 
-#[derive(StructOpt, Debug)]
-#[structopt(name = "mktoc")]
-struct Cli {
-    #[structopt(default_value = "README.md")]
+#[derive(Parser, Debug)]
+#[command(author, version, about, long_about = None)]
+struct Args {
+    #[arg(default_value = "README.md")]
     file: String,
 
-    #[structopt(
-        long,
-        short,
-        help = "If set will output to stdout instead of replacing content in file"
-    )]
+    /// If set will output to stdout instead of replacing content in file
+    #[arg(long, short)]
     stdout: bool,
 
-    #[structopt(
-        long,
-        short = "m",
-        default_value = "1",
-        env = "MKTOC_MIN_DEPTH",
-        help = "Minimum heading level"
-    )]
+    /// Minimum heading level
+    #[arg(long, short = 'm', default_value_t = 1, env = "MKTOC_MIN_DEPTH")]
     min_depth: i32,
 
-    #[structopt(
-        long,
-        short = "M",
-        default_value = "6",
-        env = "MKTOC_MAX_DEPTH",
-        help = "Maximum heading level"
-    )]
+    /// Maximum heading level
+    #[arg(long, short = 'M', default_value_t = 6, env = "MKTOC_MAX_DEPTH")]
     max_depth: i32,
 }
 
-fn handle_write(new_toc: String) {
-    let opts = Cli::from_args();
-    if !opts.stdout {
-        let res_write = std::fs::write(opts.file, new_toc.as_bytes());
+fn handle_write(args: Args, new_toc: String) {
+    if !args.stdout {
+        let res_write = std::fs::write(&args.file, new_toc.as_bytes());
         match res_write {
             Ok(_r) => {
                 std::process::exit(0);
@@ -51,12 +37,12 @@ fn handle_write(new_toc: String) {
 }
 
 fn main() {
-    let opts = Cli::from_args();
-    let res = mktoc::make_toc(opts.file, opts.min_depth, opts.max_depth);
+    let args = Args::parse();
+    let res = mktoc::make_toc(&args.file, args.min_depth, args.max_depth);
 
     match res {
         Ok(new_toc) => {
-            handle_write(new_toc);
+            handle_write(args, new_toc);
             std::process::exit(0);
         }
         Err(e) => {
