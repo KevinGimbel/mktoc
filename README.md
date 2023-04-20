@@ -4,7 +4,8 @@
 ![](https://github.com/kevingimbel/mktoc/workflows/Clippy%20check/badge.svg)
 
 # Table of Contents
-<!-- BEGIN mktoc -->
+<!-- BEGIN mktoc {"min_depth":2} -->
+
 - [About](#about)
 - [Installation](#installation)
   - [Cargo](#cargo)
@@ -19,6 +20,7 @@
 - [Contributing](#contributing)
   - [Where to start?](#where-to-start)
   - [Tooling](#tooling)
+  - [Install dev build](#install-dev-build)
 - [License](#license)
 <!-- END mktoc -->
 
@@ -69,7 +71,24 @@ Starting with version 3.0.0 it's possible to set values in-line which is great w
 
 ```html
 <!-- BEGIN mktoc {"min_depth": 2, "max_depth": 4} -->
-<!-- END mktoc -->
+
+- [About](#about)
+- [Installation](#installation)
+  - [Cargo](#cargo)
+  - [Binary](#binary)
+- [Usage](#usage)
+  - [Update Markdown file](#update-markdown-file)
+    - [Inline config](#inline-config)
+  - [Command line](#command-line)
+  - [Environment configuration](#environment-configuration)
+- [Auto-run with VSCode](#auto-run-with-vscode)
+- [Performance](#performance)
+- [Contributing](#contributing)
+  - [Where to start?](#where-to-start)
+  - [Tooling](#tooling)
+  - [Install dev build](#install-dev-build)
+- [License](#license)
+<!-- END mktoc -- >
 ```
 
 this is equal to running `mktoc -m 2 -M 4` or setting these environment variables `MKTOC_MIN_DEPTH=2` and `MKTOC_MAX_DEPTH=4`.
@@ -174,6 +193,18 @@ Here are some good places to start:
 
 - [mktoc](https://github.com/KevinGimbel/mktoc) is used for table of content generation in the README.md (neat!)
 - [criterion](https://github.com/bheisler/criterion.rs) for benchmarking
+
+### Install dev build
+
+Sometimes it's nice to install a specific version of mktoc, this can be done with the following command:
+
+```sh
+# install specific commit
+cargo install --git https://github.com/KevinGimbel/mktoc --force --rev $COMMIT_ID
+# install branch
+cargo install --git https://github.com/KevinGimbel/mktoc --force --branch $BRANCH_NAME
+```
+
 
 ## License
 [⬆️ Back to Top](#table-of-contents)
