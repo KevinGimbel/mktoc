@@ -1,4 +1,5 @@
 use clap::Parser;
+use mktoc::Config;
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
@@ -38,7 +39,8 @@ fn handle_write(args: Args, new_toc: String) {
 
 fn main() {
     let args = Args::parse();
-    let res = mktoc::make_toc(&args.file, args.min_depth, args.max_depth);
+    let config = Config{min_depth: args.min_depth, max_depth: args.max_depth, ..Default::default()};
+    let res = mktoc::make_toc(&args.file, config);
 
     match res {
         Ok(new_toc) => {
