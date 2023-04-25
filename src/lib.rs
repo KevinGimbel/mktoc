@@ -41,6 +41,23 @@ impl Default for Config {
     }
 }
 
+impl PartialEq for Config {
+    fn eq(&self, other: &Self) -> bool {
+        return self.max_depth == other.max_depth 
+         && self.min_depth == other.min_depth
+         && self.wrap_in_details == other.wrap_in_details
+         && self.start_comment == other.start_comment;
+        
+    }
+
+    fn ne(&self, other: &Self) -> bool { 
+        return self.max_depth != other.max_depth 
+            || self.min_depth != other.min_depth 
+            || self.wrap_in_details != other.wrap_in_details 
+            || self.start_comment != other.start_comment;
+    }
+}
+
 fn default_min_depth() -> i32 {
     1
 }
@@ -84,8 +101,7 @@ pub fn generate_toc(original_content: String, config: Config) -> String {
     let mut new_toc = String::from("");
     let re = regex::Regex::new(r"((#{1,6}\s))((.*))").unwrap();
     for line in original_content.lines() {
-        let line_s: String = line.chars().take(3).collect();
-        if line_s == *"```" {
+        if line.starts_with("```") {
             code_block_found = true;
         }
 
@@ -147,8 +163,8 @@ pub fn generate_toc(original_content: String, config: Config) -> String {
 }
 
 fn cleanup_wrapped_toc(input: String) -> String {
-    // starting with an indention of 4 GitHub will render code. So we strip away all lines
-    // staring with 4 spaces.
+    // 4 spaces will render a code block if wrapped inside a HTML element. 
+    // So we strip away all lines staring with 4 spaces.
     let re = Regex::new(r"(?m)^ {4}").unwrap();
     let new_content = re.replace_all(&input, "").to_string();
 
@@ -225,6 +241,257 @@ pub fn make_toc<P>(
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn test_read_file() {
+        struct TestCase<'a> {
+            name: &'a str,
+            input: &'a str,
+            expect_error: bool,
+        }
+
+        let tests = [
+            TestCase{
+                name: "File exists and can be read",
+                input: "tests/files/README_01.md",
+                expect_error: false
+            },
+            TestCase{
+                name: "File does not exist",
+                input: "tests/files/doesnt-exists.md",
+                expect_error: true
+            },
+            TestCase{
+                name: "Directory does not exist",
+                input: "anywhere/but/here/README.md",
+                expect_error: true
+            }
+        ];
+
+        for test in tests {
+            dbg!(test.name);
+            match read_file(test.input) {
+                Ok(_content) => {
+                    assert_eq!(false, test.expect_error)
+                }
+                Err(_err) => {
+                    assert_eq!(true, test.expect_error)
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn test_generate_toc() {
+        struct TestCase<'a> {
+            name: &'a str,
+            input: &'a str,
+            expected: &'a str,
+        }
+
+        let tests = [
+            TestCase{
+                name: "Can parse simple input to ToC",
+                input: r#"
+# Test
+<!-- BEGIN mktoc -->
+<!-- END mktoc -->
+## Hello
+### World"#,
+                expected: r#"<!-- BEGIN mktoc -->
+
+- [Test](#test)
+- [Hello](#hello)
+  - [World](#world)
+<!-- END mktoc -->"#
+            },
+            TestCase{
+                name: "Can find all heading levels",
+                input: r#"
+# Test 1
+<!-- BEGIN mktoc -->
+<!-- END mktoc -->
+## Test 2
+### Test 3
+#### Test 4
+##### Test 5
+###### Test 6"#,
+                expected: r#"<!-- BEGIN mktoc -->
+
+- [Test 1](#test-1)
+- [Test 2](#test-2)
+  - [Test 3](#test-3)
+    - [Test 4](#test-4)
+      - [Test 5](#test-5)
+        - [Test 6](#test-6)
+<!-- END mktoc -->"#
+            },
+            TestCase{
+                name: "Can parse with code in headings",
+                input: r#"
+# Test
+<!-- BEGIN mktoc -->
+<!-- END mktoc -->
+## `Hello`
+### World"#,
+                expected: r#"<!-- BEGIN mktoc -->
+
+- [Test](#test)
+- [`Hello`](#hello)
+  - [World](#world)
+<!-- END mktoc -->"#
+            },
+            TestCase{
+                name: "Can parse headings with emojis",
+                input: r#"
+# Test
+<!-- BEGIN mktoc -->
+<!-- END mktoc -->
+## Hello 🥳
+### World"#,
+                expected: r#"<!-- BEGIN mktoc -->
+
+- [Test](#test)
+- [Hello 🥳](#hello-🥳)
+  - [World](#world)
+<!-- END mktoc -->"#
+            },
+            TestCase{
+                name: "Can exclude code blocks",
+                input: r#"
+# Test
+<!-- BEGIN mktoc -->
+<!-- END mktoc -->
+## Hello
+
+Lorem Ipsum Dolor...
+
+```
+# inline comment
+fn some_func() -> bool {}
+```
+"#,
+                expected: r#"<!-- BEGIN mktoc -->
+
+- [Test](#test)
+- [Hello](#hello)
+<!-- END mktoc -->"#
+            }
+        ];
+
+        // (original_content: String, config: Config)
+
+        for test in tests {
+            dbg!(test.name);
+            let new_toc = generate_toc(test.input.to_string(), Config::default());
+            assert_eq!(new_toc, test.expected.to_string());
+        }
+    } 
+
+    #[test]
+    fn test_generate_toc_wrap_details() {
+        struct TestCase<'a> {
+            name: &'a str,
+            input: &'a str,
+            expected: &'a str,
+        }
+
+        let tests = [
+            TestCase{
+                name: "Can wrap ToC in details",
+                input: r#"
+# Test
+<!-- BEGIN mktoc -->
+<!-- END mktoc -->
+## Hello
+### World"#,
+                expected: r#"<!-- BEGIN mktoc -->
+<details><summary>Table of Contents</summary>
+
+- [Test](#test)
+- [Hello](#hello)
+  - [World](#world)
+
+</details>
+<!-- END mktoc -->
+"#
+            },
+        ];
+
+        for test in tests {
+            dbg!(test.name);
+            let new_toc = generate_toc(test.input.to_string(), Config{wrap_in_details: true, ..Config::default()});
+            assert_eq!(new_toc, test.expected.to_string());
+        }
+    }
+
+    #[test]
+    fn test_parse_json_config_or_use_provided() {
+        struct TestCase<'a> {
+            name: &'a str,
+            input: &'a str,
+            input_cnf: Config,
+            expected: Config,
+        }
+
+        let tests = [
+            TestCase{
+                name: "Default config used if empty input",
+                input: "",
+                input_cnf: Config{..Default::default()},
+                expected: Config{..Default::default()},
+            }, 
+            TestCase{
+                name: "",
+                input: "<!-- BEGIN mktoc {\"wrap_in_details\": false} -->",
+                input_cnf: Config{wrap_in_details: true, ..Default::default()},
+                expected: Config{wrap_in_details: false, start_comment: String::from("<!-- BEGIN mktoc {\"wrap_in_details\": false} -->"), ..Default::default()},
+            }
+        ];
+        
+        for test in tests {
+            dbg!(test.name);
+            let cnf = parse_json_config_or_use_provided(test.input, test.input_cnf);
+            assert_eq!(cnf, test.expected);
+        }
+    }
+
+    #[test]
+    fn test_config_eq() {
+        let cnf1 = Config{..Default::default()};
+        let cnf2 = Config{..Default::default()};
+
+        assert_eq!(cnf1, cnf2);
+    }
+
+    #[test]
+    fn test_config_ne() {
+        struct TestCase {
+            cnf1: Config, 
+            cnf2: Config,
+        }
+
+        let tests = [
+            TestCase{
+                cnf1: Config{min_depth: 1, ..Default::default()},
+                cnf2: Config{min_depth: 2, ..Default::default()},
+            },TestCase{
+                cnf1: Config{max_depth: 3, ..Default::default()},
+                cnf2: Config{max_depth: 4, ..Default::default()},
+            },
+            TestCase{
+                cnf1: Config{wrap_in_details: false, ..Default::default()},
+                cnf2: Config{wrap_in_details: true, ..Default::default()},
+            },
+            TestCase{
+                cnf1: Config{start_comment: String::from(""), ..Default::default()},
+                cnf2: Config{start_comment: String::from("Different"), ..Default::default()},
+            },
+        ];
+
+        for test in tests {
+            assert!(test.cnf1 != test.cnf2);
+        }
+    }
 
     #[test]
     fn test_text_to_url() {
@@ -234,7 +501,7 @@ mod tests {
             expected: String,
         }
 
-        let tests = vec![
+        let tests = [
             TestCase{
                 name: "Case 01: My heading",
                 input: "My heading",
@@ -276,7 +543,7 @@ mod tests {
             expected: Config,
         }
 
-        let tests = vec![
+        let tests = [
             TestCase{
                 name: "only min_depth set",
                 input: "<!-- BEGIN mktoc {\"min_depth\":3} -->",
@@ -310,6 +577,22 @@ mod tests {
             TestCase{
                 name: "invalid max_depth set results in default max_depth being used",
                 input: "<!-- BEGIN mktoc {\"max_depth\":10} -->",
+                expected: Config{
+                    max_depth: 6,
+                    ..Default::default()
+                }
+            },
+            TestCase{
+                name: "invalid min_depth set results in default min_depth being used",
+                input: "<!-- BEGIN mktoc {\"min_depth\":-1} -->",
+                expected: Config{
+                    max_depth: 6,
+                    ..Default::default()
+                }
+            },
+            TestCase{
+                name: "invalid config used, fallback to default",
+                input: "<!-- BEGIN mktoc {\"doesn_t_exists\":false} -->",
                 expected: Config{
                     max_depth: 6,
                     ..Default::default()
@@ -360,4 +643,10 @@ mod tests {
             assert_eq!(strip_markdown_links(test_case.input), test_case.expected);
         }
     }
+
+    // TODO: implement this test
+    // #[test]
+    // fn test_make_toc() {
+    //     todo!()
+    // }   
 }

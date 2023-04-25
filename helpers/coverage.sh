@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-export LLVM_PROFILE_FILE="fd-%p-%m.profraw"
+export LLVM_PROFILE_FILE="mktoc-%p-%m.profraw"
 export RUSTFLAGS="-Cinstrument-coverage"
 
 # build project

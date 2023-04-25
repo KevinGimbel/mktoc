@@ -34,3 +34,10 @@ let a = MyStruct{name: "a_struct", ..Default::default()};
 assert_eq("a_struct", a.name);
 assert_eq(String::from("1234-4321-9817"), a.id);
 ```
+
+### No lang tag code block
+
+```
+## this is some text
+just some text :)
+```
