@@ -2,7 +2,7 @@
 name = "mktoc"
 description = "Generate Table of Contents from Markdown files"
 license = "MIT"
-version = "3.0.1"
+version = "3.1.0"
 authors = ["Kevin Gimbel <hallo@kevingimbel.com>"]
 edition = "2018"
 repository = "https://github.com/kevingimbel/mktoc"

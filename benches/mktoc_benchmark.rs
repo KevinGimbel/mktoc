@@ -12,7 +12,7 @@ fn mktoc_benchmark(c: &mut Criterion) {
     for entry in fs::read_dir("tests/files/").unwrap() {
         let file = entry.unwrap();
         c.bench_function(format!("mktoc:{:?}", file.path()).as_str(), |b| {
-            b.iter(|| make_toc(file.path(), 1, 6))
+            b.iter(|| make_toc(file.path(), Config::default()));
         });    
     }
 }

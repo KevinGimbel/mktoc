@@ -7,12 +7,16 @@ use serde::{Deserialize, Serialize};
 const COMMENT_BEGIN: &str = "<!-- BEGIN mktoc -->";
 const COMMENT_END: &str = "<!-- END mktoc -->";
 
-#[derive(Debug, Deserialize, Serialize)]
-struct Config {
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct Config {
     #[serde(default = "default_min_depth")]
-    min_depth: i32,
+    pub min_depth: i32,
     #[serde(default = "default_max_depth")]
-    max_depth: i32,
+    pub max_depth: i32,
+    #[serde(default)]
+    pub wrap_in_details: bool, 
+    #[serde(default)]
+    pub start_comment: String,
 }
 
 impl Config {
@@ -33,7 +37,7 @@ impl Config {
 
 impl Default for Config {
     fn default() -> Self {
-        Self { min_depth: default_min_depth(), max_depth: default_max_depth() }
+        Self { min_depth: default_min_depth(), max_depth: default_max_depth(), wrap_in_details: false, start_comment: COMMENT_BEGIN.to_string()}
     }
 }
 
@@ -55,60 +59,37 @@ fn read_file<P>(file_path: P) -> Result<String, ::std::io::Error>
     Ok(contents)
 }
 
+fn strip_markdown_links(text: &str) -> String {
+    let pattern =  r"(?P<before>[^\[]*)(\[(?P<text>[^\]]+)\]\((?P<link>[^)]+)\))(?P<after>[^\[]*)";
+    let re_link = regex::Regex::new(pattern).unwrap();
+    let txt = re_link.replace_all(text, "$before$text$after");
+
+    txt.to_string()
+}
+
 fn text_to_url(text: &str) -> String {
-    text.trim()
-        .replace(" ", "-")
-        .replace("(", "")
-        .replace(")", "")
-        .replace("`", "")
-        .replace("´", "")
-        .replace("'", "")
-        .replace("\"", "")
-        .replace("[", "")
-        .replace("]", "")
-        .replace("{", "")
-        .replace("}", "")
-        .replace("?", "")
-        .replace("¿", "")
-        .replace("!", "")
-        .replace("¡", "")
-        .replace(".", "")
-        .replace(",", "")
-        .replace("\\", "")
-        .replace("/", "")
-        .replace(":", "")
-        .replace(";", "")
-        .replace("§", "")
-        .replace("$", "")
-        .replace("%", "")
-        .replace("&", "")
-        .replace("=", "")
-        .replace("^", "")
-        .replace("°", "")
-        .replace("#", "")
-        .replace("+", "")
-        .replace("*", "")
-        .replace("<", "")
-        .replace(">", "")
+    let txt = strip_markdown_links(text);
+    txt.trim()
+        .replace(' ', "-")
+        .replace(['(', ')', '`', '´', '\'', '"', '[', ']', '{', '}', '?', '¿', '!', '¡', '.', ',', '\\', '/', ':', ';', '§', '$', '%', '&', '=', '^', '°', '#', '+', '*', '<', '>'], "")
         .to_ascii_lowercase()
 }
 
 /// parses a string and extracts all headlines to build a table of contents
 ///
 /// Uses a basic regex "((#{1,6}\s))((.*))" to parse headings out of the
-pub fn generate_toc(original_content: String, min_depth: i32, max_depth: i32, start_comment: String) -> String {
+pub fn generate_toc(original_content: String, config: Config) -> String {
     let mut already_found_code_open = false;
     let mut code_block_found = false;
-    let mut new_toc = start_comment;
+    let mut new_toc = String::from("");
     let re = regex::Regex::new(r"((#{1,6}\s))((.*))").unwrap();
     for line in original_content.lines() {
         let line_s: String = line.chars().take(3).collect();
-        if line_s == "```".to_owned() {
+        if line_s == *"```" {
             code_block_found = true;
         }
 
-        if !code_block_found && !already_found_code_open {
-            if line.starts_with("#") {
+        if !code_block_found && !already_found_code_open && line.starts_with('#') {
                 // Check if the regex matches, if it doesn't continue skip (continue) the loop.
                 let caps = match re.captures(line) {
                     Some(matched) => matched,
@@ -117,16 +98,16 @@ pub fn generate_toc(original_content: String, min_depth: i32, max_depth: i32, st
                 
                 let level: i32 = (caps.get(2).unwrap().as_str().chars().count() - 1) as i32;
                 
-                if level < min_depth {
+                if level < config.min_depth {
                     continue;
                 }
 
-                if level > max_depth {
+                if level > config.max_depth {
                     continue;
                 }
 
-                let text = caps.get(3).unwrap().as_str();
-                let link = text_to_url(text);
+                let text = strip_markdown_links(caps.get(3).unwrap().as_str());
+                let link = text_to_url(text.as_str());
                 let spaces = match level {
                     3 => String::from("  "),
                     4 => String::from("    "),
@@ -142,7 +123,6 @@ pub fn generate_toc(original_content: String, min_depth: i32, max_depth: i32, st
                     text = text,
                     link = link
                 );
-            }
         }
 
         if code_block_found && already_found_code_open {
@@ -155,15 +135,31 @@ pub fn generate_toc(original_content: String, min_depth: i32, max_depth: i32, st
         }
     }
 
-    new_toc = format!("{}\n{}", new_toc, COMMENT_END);
+    if config.wrap_in_details {
+        let new_toc_content = cleanup_wrapped_toc(new_toc);
+        new_toc = format!("{}\n<details><summary>Table of Contents</summary>\n{}\n\n</details>\n{}\n",config.start_comment, new_toc_content, COMMENT_END);
+    } else {
+        new_toc = format!("{}\n{}\n{}", config.start_comment, new_toc, COMMENT_END);
+    }
+
 
     new_toc
 }
 
-fn parse_json_config_and_begin_comment<'t>(text: &'t str) -> (Config, String) {
+fn cleanup_wrapped_toc(input: String) -> String {
+    // starting with an indention of 4 GitHub will render code. So we strip away all lines
+    // staring with 4 spaces.
+    let re = Regex::new(r"(?m)^ {4}").unwrap();
+    let new_content = re.replace_all(&input, "").to_string();
+
+    new_content
+}
+
+fn parse_json_config(text: &str) -> (Config, bool) {
+    let mut json_config_found = false;
     let mut start_comment = COMMENT_BEGIN.to_string();
     let re = Regex::new(r"<!--\s*BEGIN mktoc\s*(?P<json>\{.*\})\s*-->").unwrap();
-    let json_str = match re.captures(&text) {
+    let json_str = match re.captures(text) {
         Some(captures) => captures.name("json").unwrap().as_str(),
         None => { "" }
     };
@@ -171,52 +167,56 @@ fn parse_json_config_and_begin_comment<'t>(text: &'t str) -> (Config, String) {
     // if a json config is found it will be injected into the start comment.
     if !json_str.is_empty() {
         start_comment = format!("<!-- BEGIN mktoc {} -->", json_str);
+        json_config_found = true;
     }
 
     // parse the JSON string as a Config struct
     let mut config: Config = match serde_json::from_str(json_str) {
         Ok(config) => config,
-        Err(_e) => { Config::default() }
+        Err(_e) => { 
+            json_config_found = false; 
+            Config::default()
+        }
     };
 
     // ensures the min_depth and max_depth are within scope
     config.ensure_min_max();
-
+    // assign start comment
+    config.start_comment = start_comment;
     
-    (config, start_comment)
+    (config, json_config_found)
+}
+
+fn parse_json_config_or_use_provided(content: &str, cnf: Config) -> Config {
+    let (json_config, json_config_found) = parse_json_config(content);
+    
+    // if a json config was found it takes priority over any other config
+    if json_config_found {
+        return json_config;
+    }
+    
+    cnf
 }
 
 /// takes a file path as `String` and returns a table of contents for the file
 pub fn make_toc<P>(
     file_path_in: P,
-    min_depth: i32,
-    max_depth: i32,
+    cnf: Config,
 )
     -> Result<String, ::std::io::Error>
     where P: AsRef<Path>
 {
     let content = read_file(file_path_in)?;
-    // extract the JSON string from the comment
-    let (config, start_comment) = parse_json_config_and_begin_comment(&content);
-
-    // Read min and max depth values, config from the file itself takes 
-    // priority over CLI args or environment values.
-    let min_depth_value = match Some(config.min_depth) {
-        Some(_value) => config.min_depth,
-        None => min_depth
-    };
-
-    let max_depth_value = match Some(config.max_depth) {
-        Some(_value) => config.max_depth,
-        None => max_depth
-    };
+    let config = parse_json_config_or_use_provided(&content, cnf);
     
-    let new_toc = generate_toc(content.to_owned(), min_depth_value, max_depth_value, start_comment);
-    
+    // create new ToC
+    let new_toc = generate_toc(content.to_owned(), config);
+
+    // get the ToC position and replace it with the new ToC
     let re_toc =
-        Regex::new(r"(?ms)^(<!--\s*BEGIN mktoc\s*(?P<json>\{.*\})\s*-->)(.*?)(<!-- END mktoc -->)").unwrap();
+        Regex::new(r"(?ms)^(<!-- BEGIN mktoc(.*?)-->)(.*?)(<!-- END mktoc -->)").unwrap();
     let res: String = re_toc
-        .replacen(content.as_str(), 1, new_toc.as_str())
+        .replace(content.as_str(), new_toc.as_str())
         .into_owned();
 
     Ok(res)
@@ -269,7 +269,7 @@ mod tests {
     }
 
     #[test]
-    fn test_parse_json_config_and_begin_comment() {
+    fn test_parse_json_config() {
         struct TestCase<'a> {
             name: &'a str,
             input: &'a str,
@@ -277,55 +277,87 @@ mod tests {
         }
 
         let tests = vec![
-        TestCase{
-            name: "only min_depth set",
-            input: "<!-- BEGIN mktoc {\"min_depth\":3} -->",
-            expected: Config{
-                min_depth: 3,
-                max_depth: 6
-            }
-        },
-        TestCase{
-            name: "min_depth and max_depth set",
-            input: "<!-- BEGIN mktoc {\"min_depth\":3, \"max_depth\":4} -->",
-            expected: Config{
-                min_depth: 3,
-                max_depth: 4
-            }
-        },
-        TestCase{
-            name: "only max_depth set",
-            input: "<!-- BEGIN mktoc {\"max_depth\":4} -->",
-            expected: Config{
-                min_depth: 1,
-                max_depth: 4
-            }
-        },
-        TestCase{
-            name: "no json config, returns default values",
-            input: "<!-- BEGIN mktoc -->",
-            expected: Config{
-                min_depth: 1,
-                max_depth: 6
-            }
-        },
-        TestCase{
-            name: "invalid max_depth set results in default max_depth being used",
-            input: "<!-- BEGIN mktoc {\"max_depth\":10} -->",
-            expected: Config{
-                min_depth: 1,
-                max_depth: 6
-            }
-        },
+            TestCase{
+                name: "only min_depth set",
+                input: "<!-- BEGIN mktoc {\"min_depth\":3} -->",
+                expected: Config{
+                    min_depth: 3,
+                    ..Default::default()
+                }
+            },
+            TestCase{
+                name: "min_depth and max_depth set",
+                input: "<!-- BEGIN mktoc {\"min_depth\":3, \"max_depth\":4} -->",
+                expected: Config{
+                    min_depth: 3,
+                    max_depth: 4,
+                    ..Default::default()
+                }
+            },
+            TestCase{
+                name: "only max_depth set",
+                input: "<!-- BEGIN mktoc {\"max_depth\":4} -->",
+                expected: Config{
+                    max_depth: 4,
+                    ..Default::default()
+                }
+            },
+            TestCase{
+                name: "no json config, returns default values",
+                input: "<!-- BEGIN mktoc -->",
+                expected: Config::default()
+            },
+            TestCase{
+                name: "invalid max_depth set results in default max_depth being used",
+                input: "<!-- BEGIN mktoc {\"max_depth\":10} -->",
+                expected: Config{
+                    max_depth: 6,
+                    ..Default::default()
+                }
+            },
         ];
 
         for test in tests {
             // logs the name of the test in case it fails.
             dbg!(test.name);
-            let (cnf, comment) = parse_json_config_and_begin_comment(&test.input);
+            let (cnf, _json_config_found) = parse_json_config(&test.input);
             assert_eq!(cnf.max_depth, test.expected.max_depth);
             assert_eq!(cnf.min_depth, test.expected.min_depth);
-            assert_eq!(comment, test.input.to_string())
+            assert_eq!(cnf.start_comment, test.input.to_string());
+        }
+    }
+
+    #[test]
+    fn test_strip_markdown_links() {
+        struct TestCase {
+            input: &'static str,
+            expected: String,
+        }
+        let test_cases = [
+            TestCase {
+                input: "This is a [link](https://example.com) in a Markdown text.",
+                expected: String::from("This is a link in a Markdown text."),
+            },
+            TestCase {
+                input: "This is a [link](https://example.com) and [another one](https://example.org) in a Markdown text.",
+                expected: String::from("This is a link and another one in a Markdown text."),
+            },
+            TestCase {
+                input: "This is a text without any links.",
+                expected: String::from("This is a text without any links."),
+            },
+            TestCase {
+                input: "",
+                expected: String::from(""),
+            },
+            TestCase {
+                input: "This is a [link](https://example.com) with some text after it.",
+                expected: String::from("This is a link with some text after it."),
+            },
+        ];
+    
+        for test_case in &test_cases {
+            assert_eq!(strip_markdown_links(test_case.input), test_case.expected);
         }
     }
 }
