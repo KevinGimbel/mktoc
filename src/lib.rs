@@ -59,8 +59,18 @@ fn read_file<P>(file_path: P) -> Result<String, ::std::io::Error>
     Ok(contents)
 }
 
+fn strip_markdown_links(text: &str) -> String {
+    let pattern =  r"(?P<before>[^\[]*)(\[(?P<text>[^\]]+)\]\((?P<link>[^)]+)\))(?P<after>[^\[]*)";
+    let re_link = regex::Regex::new(pattern).unwrap();
+    let txt = re_link.replace_all(text, "$before$text$after");
+
+    txt.to_string()
+}
+
 fn text_to_url(text: &str) -> String {
-    text.trim()
+    let txt = strip_markdown_links(text);
+    txt.trim()
+        .replace(' ', "-")
         .replace(['(', ')', '`', '´', '\'', '"', '[', ']', '{', '}', '?', '¿', '!', '¡', '.', ',', '\\', '/', ':', ';', '§', '$', '%', '&', '=', '^', '°', '#', '+', '*', '<', '>'], "")
         .to_ascii_lowercase()
 }
@@ -96,8 +106,8 @@ pub fn generate_toc(original_content: String, config: Config) -> String {
                     continue;
                 }
 
-                let text = caps.get(3).unwrap().as_str();
-                let link = text_to_url(text);
+                let text = strip_markdown_links(caps.get(3).unwrap().as_str());
+                let link = text_to_url(text.as_str());
                 let spaces = match level {
                     3 => String::from("  "),
                     4 => String::from("    "),
@@ -179,6 +189,7 @@ fn parse_json_config(text: &str) -> (Config, bool) {
 
 fn parse_json_config_or_use_provided(content: &str, cnf: Config) -> Config {
     let (json_config, json_config_found) = parse_json_config(content);
+    
     // if a json config was found it takes priority over any other config
     if json_config_found {
         return json_config;
@@ -200,12 +211,12 @@ pub fn make_toc<P>(
     
     // create new ToC
     let new_toc = generate_toc(content.to_owned(), config);
-    
-    // get the ToC position and replace it with the new PoC
+
+    // get the ToC position and replace it with the new ToC
     let re_toc =
-        Regex::new(r"(?ms)^(<!--\s*BEGIN mktoc\s*(?P<json>\{.*\})\s*-->)(.*?)(<!-- END mktoc -->)").unwrap();
+        Regex::new(r"(?ms)^(<!-- BEGIN mktoc(.*?)-->)(.*?)(<!-- END mktoc -->)").unwrap();
     let res: String = re_toc
-        .replacen(content.as_str(), 1, new_toc.as_str())
+        .replace(content.as_str(), new_toc.as_str())
         .into_owned();
 
     Ok(res)
@@ -313,6 +324,40 @@ mod tests {
             assert_eq!(cnf.max_depth, test.expected.max_depth);
             assert_eq!(cnf.min_depth, test.expected.min_depth);
             assert_eq!(cnf.start_comment, test.input.to_string());
+        }
+    }
+
+    #[test]
+    fn test_strip_markdown_links() {
+        struct TestCase {
+            input: &'static str,
+            expected: String,
+        }
+        let test_cases = [
+            TestCase {
+                input: "This is a [link](https://example.com) in a Markdown text.",
+                expected: String::from("This is a link in a Markdown text."),
+            },
+            TestCase {
+                input: "This is a [link](https://example.com) and [another one](https://example.org) in a Markdown text.",
+                expected: String::from("This is a link and another one in a Markdown text."),
+            },
+            TestCase {
+                input: "This is a text without any links.",
+                expected: String::from("This is a text without any links."),
+            },
+            TestCase {
+                input: "",
+                expected: String::from(""),
+            },
+            TestCase {
+                input: "This is a [link](https://example.com) with some text after it.",
+                expected: String::from("This is a link with some text after it."),
+            },
+        ];
+    
+        for test_case in &test_cases {
+            assert_eq!(strip_markdown_links(test_case.input), test_case.expected);
         }
     }
 }
