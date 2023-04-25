@@ -2,10 +2,10 @@
 > Markdown Table of Content generator
 
 ![](https://github.com/kevingimbel/mktoc/workflows/Clippy%20check/badge.svg)
+![Coverage](assets/coverage/flat.svg)
 
 # Table of Contents
 <!-- BEGIN mktoc {"min_depth":2} -->
-
 - [About](#about)
 - [Installation](#installation)
   - [Cargo](#cargo)
