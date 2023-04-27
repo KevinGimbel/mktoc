@@ -5,7 +5,8 @@
 ![Coverage](assets/coverage/flat.svg)
 
 # Table of Contents
-<!-- BEGIN mktoc {"min_depth":2} -->
+<!-- BEGIN mktoc {"min_depth":2, "max_depth":5} -->
+
 - [About](#about)
 - [Installation](#installation)
   - [Cargo](#cargo)
@@ -17,6 +18,14 @@
       - [`max_depth`](#max_depth)
       - [`wrap_in_details`](#wrap_in_details)
   - [Command line](#command-line)
+  - [Environment configuration](#environment-configuration)
+- [Auto-run with VSCode](#auto-run-with-vscode)
+- [Performance](#performance)
+- [Contributing](#contributing)
+  - [Where to start?](#where-to-start)
+  - [Tooling](#tooling)
+  - [Install dev build](#install-dev-build)
+- [License](#license)
 <!-- END mktoc -->
 
 
@@ -107,12 +116,12 @@ Options:
   -w, --wrap-in-details        Wrap ToC in details html element [env: MKTOC_WRAP_IN_DETAILS=]
   -h, --help                   Print help
   -V, --version                Print version
-```
-```sh
+
 $ mktoc -s README.md
 $ mktoc -m 2 -M 4 README.md
 $ mktoc
 ```
+
 If no arguments are given the default or configured (via environment) values are
 used. 
 
