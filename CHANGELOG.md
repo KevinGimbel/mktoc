@@ -1,5 +1,10 @@
 # Changelog
 
+## v3.2.0
+
+- add `-w` and `--wrap-in-details` option to cli [e75e288](https://github.com/KevinGimbel/mktoc/commit/e75e288)
+- small readme updated [e75e288](https://github.com/KevinGimbel/mktoc/commit/e75e288)
+
 ## v3.1.0
 
 - Replace structopts with clap [#10](https://github.com/KevinGimbel/mktoc/issues/10) by [@oylenshpeegul](https://github.com/oylenshpeegul)
