@@ -6,7 +6,7 @@ version = "3.2.1"
 authors = ["Kevin Gimbel <hallo@kevingimbel.com>"]
 edition = "2018"
 repository = "https://github.com/kevingimbel/mktoc"
-exclude = [".github", "assets", "benches", "helpers", "tests", ".gitignore", "Makefile"]
+exclude = [".github", "assets", "helpers", "tests", ".gitignore", "Makefile"]
 
 [lib]
 name = "mktoc"
