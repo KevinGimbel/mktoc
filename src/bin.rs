@@ -18,6 +18,10 @@ struct Args {
     /// Maximum heading level
     #[arg(long, short = 'M', default_value_t = 6, env = "MKTOC_MAX_DEPTH")]
     max_depth: i32,
+
+    /// Wrap ToC in details html element
+    #[arg(long, short = 'w', default_value_t = false, env = "MKTOC_WRAP_IN_DETAILS")]
+    wrap_in_details: bool,
 }
 
 fn handle_write(args: Args, new_toc: String) {
@@ -39,7 +43,7 @@ fn handle_write(args: Args, new_toc: String) {
 
 fn main() {
     let args = Args::parse();
-    let config = Config{min_depth: args.min_depth, max_depth: args.max_depth, ..Default::default()};
+    let config = Config{min_depth: args.min_depth, max_depth: args.max_depth, wrap_in_details: args.wrap_in_details, ..Default::default()};
     let res = mktoc::make_toc(&args.file, config);
 
     match res {

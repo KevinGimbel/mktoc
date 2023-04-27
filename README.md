@@ -13,16 +13,12 @@
 - [Usage](#usage)
   - [Update Markdown file](#update-markdown-file)
     - [Inline config](#inline-config)
+      - [`min_depth`](#min_depth)
+      - [`max_depth`](#max_depth)
+      - [`wrap_in_details`](#wrap_in_details)
   - [Command line](#command-line)
-  - [Environment configuration](#environment-configuration)
-- [Auto-run with VSCode](#auto-run-with-vscode)
-- [Performance](#performance)
-- [Contributing](#contributing)
-  - [Where to start?](#where-to-start)
-  - [Tooling](#tooling)
-  - [Install dev build](#install-dev-build)
-- [License](#license)
 <!-- END mktoc -->
+
 
 ## About
 [⬆️ Back to Top](#table-of-contents)
@@ -70,24 +66,7 @@ Everything between those comments will be replaced!
 Starting with version 3.0.0 it's possible to set values in-line which is great when collaborating with teams who may have individual settings.
 
 ```html
-<!-- BEGIN mktoc {"min_depth": 2, "max_depth": 4} -->
-
-- [About](#about)
-- [Installation](#installation)
-  - [Cargo](#cargo)
-  - [Binary](#binary)
-- [Usage](#usage)
-  - [Update Markdown file](#update-markdown-file)
-    - [Inline config](#inline-config)
-  - [Command line](#command-line)
-  - [Environment configuration](#environment-configuration)
-- [Auto-run with VSCode](#auto-run-with-vscode)
-- [Performance](#performance)
-- [Contributing](#contributing)
-  - [Where to start?](#where-to-start)
-  - [Tooling](#tooling)
-  - [Install dev build](#install-dev-build)
-- [License](#license)
+<!-- BEGIN mktoc {"min_depth": 2, "max_depth": 4, "wrap_in_details": false} -->
 <!-- END mktoc -- >
 ```
 
@@ -95,13 +74,41 @@ this is equal to running `mktoc -m 2 -M 4` or setting these environment variable
 
 Inline config takes priority over environment or CLI arguments.
 
+##### `min_depth`
+
+The minumum depth to look for, defaults to 1 which is equal to `<h1>` or `#`.
+
+##### `max_depth`
+
+The maximum depth to look for, defaults to 6 which is equal to `<h6>` or `######`.
+
+##### `wrap_in_details`
+
+If set to true, the ToC will be wrapped in a `<details>` element.
+
 ### Command line
 [⬆️ Back to Top](#table-of-contents)
 
 Specify `--stdout` or `-s` to output generated content to `stdout` instead of overwriting file. By default the specified file will be overwritten.
 
 ```sh
-# mktoc [FLAGS] [OPTIONS] [file] 
+$ mktoc -h
+Generate Table of Contents from Markdown files
+
+Usage: mktoc [OPTIONS] [FILE]
+
+Arguments:
+  [FILE]  [default: README.md]
+
+Options:
+  -s, --stdout                 If set will output to stdout instead of replacing content in file
+  -m, --min-depth <MIN_DEPTH>  Minimum heading level [env: MKTOC_MIN_DEPTH=] [default: 1]
+  -M, --max-depth <MAX_DEPTH>  Maximum heading level [env: MKTOC_MAX_DEPTH=] [default: 6]
+  -w, --wrap-in-details        Wrap ToC in details html element [env: MKTOC_WRAP_IN_DETAILS=]
+  -h, --help                   Print help
+  -V, --version                Print version
+```
+```sh
 $ mktoc -s README.md
 $ mktoc -m 2 -M 4 README.md
 $ mktoc
@@ -147,6 +154,7 @@ Place these variables in a shell environment file such as `~/.bashrc` or
 # 
 # MKTOC_MIN_DEPTH=2
 # MKTOC_MAX_DEPTH=4
+# MKTOC_WRAP_IN_DETAILS=true
 
 $ mktoc README.md
 ```
