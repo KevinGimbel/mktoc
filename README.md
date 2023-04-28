@@ -1,5 +1,8 @@
 # `mktoc`
-> Markdown Table of Content generator
+
+![](assets/github-header.png)
+
+<small>Graphic design is my passion ✨</small>
 
 ![](https://github.com/kevingimbel/mktoc/workflows/Clippy%20check/badge.svg)
 ![Coverage](assets/coverage/flat.svg)
