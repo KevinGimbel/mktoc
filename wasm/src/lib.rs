@@ -1,14 +1,14 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
+use mktoc;
+use wasm_bindgen::prelude::*;
+
+#[wasm_bindgen]
+pub fn make_toc(content: &str) -> String {
+    mktoc::add_toc(
+        content.to_string(),
+        mktoc::generate_toc(content.to_string(), mktoc::Config::default()),
+    )
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
+#[wasm_bindgen]
+pub fn make_toc_only(content: &str) -> String {
+    mktoc::generate_toc(content.to_string(), mktoc::Config::default())
 }

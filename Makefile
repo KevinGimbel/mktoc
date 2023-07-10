@@ -15,4 +15,4 @@ build-web:	## Build the wasm code
 
 publish-web:	## Publish the wasm code as npm package
 	@cd wasm && wasm-pack pack
-	@cd wasm && wasm-pack publish 
+	@cd wasm && wasm-pack publish --target web
