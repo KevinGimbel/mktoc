@@ -9,3 +9,10 @@ bench:	## Run benchmarks with criterion
 
 build:	## Run cargo build with --release flag to build the binary
 	@cargo build --release
+
+build-web:	## Build the wasm code
+	@cd wasm && wasm-pack build --release --target web --out-dir pkg
+
+publish-web:	## Publish the wasm code as npm package
+	@cd wasm && wasm-pack pack
+	@cd wasm && wasm-pack publish 
