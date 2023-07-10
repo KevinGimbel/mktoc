@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.3.0
+
+- refactor `make_toc` function for easier third-party integration [#13](https://github.com/KevinGimbel/mktoc/issues/13)
+
 ## v3.2.0
 
 - add `-w` and `--wrap-in-details` option to cli [e75e288](https://github.com/KevinGimbel/mktoc/commit/e75e288)
