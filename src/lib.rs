@@ -55,17 +55,10 @@ impl Default for Config {
 
 impl PartialEq for Config {
     fn eq(&self, other: &Self) -> bool {
-        return self.max_depth == other.max_depth
+        self.max_depth == other.max_depth
             && self.min_depth == other.min_depth
             && self.wrap_in_details == other.wrap_in_details
-            && self.start_comment == other.start_comment;
-    }
-
-    fn ne(&self, other: &Self) -> bool {
-        return self.max_depth != other.max_depth
-            || self.min_depth != other.min_depth
-            || self.wrap_in_details != other.wrap_in_details
-            || self.start_comment != other.start_comment;
+            && self.start_comment == other.start_comment
     }
 }
 
