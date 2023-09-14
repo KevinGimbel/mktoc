@@ -56,7 +56,9 @@ $ cargo install --force mktoc
 
 ### Binary
 
-Binaries are not available yet. If you know how releasing binaries with Rust can be implemented, please let me know!
+Binaries for Linux and MacOS can be downloaded from the [release page](https://github.com/KevinGimbel/mktoc/releases/latest).
+
+Windows Binaries are not yet build automatically, see [#7](https://github.com/KevinGimbel/mktoc/issues/7).
 
 ## Usage
 
