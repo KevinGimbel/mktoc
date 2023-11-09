@@ -5,6 +5,7 @@
 <small>Graphic design is my passion ✨</small>
 
 ![](https://github.com/kevingimbel/mktoc/workflows/Clippy%20check/badge.svg)
+![](https://github.com/kevingimbel/mktoc/workflows/Test/badge.svg)
 ![Coverage](assets/coverage/flat.svg)
 
 # Table of Contents
