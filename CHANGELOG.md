@@ -1,5 +1,9 @@
 # Changelog
 
+## v4.0.0
+
+- use Rust Edition 2021 (upgrade from 2018)
+
 ## v3.3.0
 
 - refactor `make_toc` function for easier third-party integration [#13](https://github.com/KevinGimbel/mktoc/issues/13)
