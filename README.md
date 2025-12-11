@@ -15,6 +15,9 @@
 - [Installation](#installation)
   - [Cargo](#cargo)
   - [Binary](#binary)
+  - [Nix](#nix)
+    - [Run on demand ](#run-on-demand)
+    - [Install (nixos / nix-darwin)](#install-nixos--nix-darwin)
 - [Usage](#usage)
   - [Update Markdown file](#update-markdown-file)
     - [Inline config](#inline-config)
@@ -60,6 +63,23 @@ $ cargo install --force mktoc
 Binaries for Linux and MacOS can be downloaded from the [release page](https://github.com/KevinGimbel/mktoc/releases/latest).
 
 Windows Binaries are not yet build automatically, see [#7](https://github.com/KevinGimbel/mktoc/issues/7).
+
+### Nix
+
+`mktoc` is available in [nixpkgs](https://search.nixos.org/packages?channel=unstable&show=mktoc&query=mktoc), as of 12/2025 it is only available in nixpkgs-unstable.
+
+#### Run on demand 
+```sh
+nix run 'github:nixos/nixpkgs/nixpkgs-unstable#mktoc'
+```
+
+#### Install (nixos / nix-darwin)
+
+```nix
+environment.systemPackages = [
+  pkgs.mktoc
+];
+```
 
 ## Usage
 

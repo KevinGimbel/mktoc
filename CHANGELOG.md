@@ -1,5 +1,11 @@
 # Changelog
 
+## v5.0.0
+
+- Upgrade to Rust Edition 2024 from 2021
+- add [nix](https://nix.dev/) flake for reproducible development environments
+- update to Rust to 1.91.1
+
 ## v4.0.0
 
 - use Rust Edition 2021 (upgrade from 2018)
