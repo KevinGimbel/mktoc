@@ -1,2 +1,5 @@
 target
 .idea
+
+# local build with nix build
+result
