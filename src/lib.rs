@@ -411,8 +411,6 @@ fn some_func() -> bool {}
             },
         ];
 
-        // (original_content: String, config: Config)
-
         for test in tests {
             dbg!(test.name);
             let new_toc = generate_toc(test.input.to_string(), Config::default());
