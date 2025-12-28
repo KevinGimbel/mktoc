@@ -1,5 +1,22 @@
 # Changelog
 
+## v5.0.0 - 2025-12-28
+
+New release who this?
+This release mainly updates Rust as well as all dependencies, and introduces a new development setup with Nix.
+
+`mktoc` has been added to `nixpkgs` ([Link](https://search.nixos.org/packages?channel=25.11&show=mktoc&query=mktoc)) and `hermit` ([Link](https://github.com/cashapp/hermit-packages/blob/master/mktoc.hcl)) for easier installation.
+
+### Changed 
+- Upgrade to Rust Edition 2024 from 2021
+- Upgrade to Rust version 1.91.1 from 1.64.0
+- Upgrade criterion from 0.4 to 0.8
+- Change regex version to 1 instead of 1.31, to automatically receive updates
+
+### Dev Tools
+- [nix](https://nix.dev/) flake has been added for reproducible development environments
+- [just](https://github.com/casey/just) has been added as task runner, replacing `make`
+
 ## v4.0.0
 
 - use Rust Edition 2021 (upgrade from 2018)

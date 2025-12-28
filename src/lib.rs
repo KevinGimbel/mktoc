@@ -108,7 +108,7 @@ fn text_to_url(text: &str) -> String {
 
 /// parses a string and extracts all headlines to build a table of contents
 ///
-/// Uses a basic regex `((#{1,6}\s))((.*))` to parse headings out of the
+/// Uses a basic regex `((#{1,6}\s))((.*))` to parse headings out of the provided content string
 ///
 /// ```
 /// use mktoc::*;
@@ -126,7 +126,7 @@ pub fn generate_toc(original_content: String, config: Config) -> String {
         }
 
         if !code_block_found && !already_found_code_open && line.starts_with('#') {
-            // Check if the regex matches, if it doesn't continue skip (continue) the loop.
+            // Check if the regex matches, if it doesn't skip the loop.
             let caps = match re.captures(line) {
                 Some(matched) => matched,
                 None => {
@@ -192,9 +192,8 @@ fn cleanup_wrapped_toc(input: String) -> String {
     // 4 spaces will render a code block if wrapped inside a HTML element.
     // So we strip away all lines staring with 4 spaces.
     let re = Regex::new(r"(?m)^ {4}").unwrap();
-    let new_content = re.replace_all(&input, "").to_string();
 
-    new_content
+    re.replace_all(&input, "").to_string()
 }
 
 /// Parses the JSON from the comment and returns the config or a default config if
@@ -410,8 +409,6 @@ fn some_func() -> bool {}
 <!-- END mktoc -->"#,
             },
         ];
-
-        // (original_content: String, config: Config)
 
         for test in tests {
             dbg!(test.name);

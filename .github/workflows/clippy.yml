@@ -1,20 +1,16 @@
+name: Clippy
+
 on:
   push:
     branches:
       - main
   pull_request:
 
-name: Clippy check
 jobs:
-  clippy_check:
+  clippy-check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          components: clippy
-          override: true
-      - uses: actions-rs/clippy-check@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/checkout@v6
+      - uses: cachix/install-nix-action@v26
+      - name: Run clippy
+        run: nix develop --command bash -c 'cargo clippy'

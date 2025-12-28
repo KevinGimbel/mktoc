@@ -1,4 +1,4 @@
-name: Test
+name: Benchmark
 
 on:
   push:
@@ -7,10 +7,10 @@ on:
   pull_request:
 
 jobs:
-  test:
+  bench:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
       - uses: cachix/install-nix-action@v26
-      - name: Run tests
-        run: nix develop --command bash -c 'cargo test'
+      - name: Run benchmark
+        run: nix develop --command bash -c 'cargo bench'

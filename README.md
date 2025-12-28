@@ -15,6 +15,10 @@
 - [Installation](#installation)
   - [Cargo](#cargo)
   - [Binary](#binary)
+  - [Hermit](#hermit)
+  - [Nix](#nix)
+    - [Run on demand ](#run-on-demand)
+    - [Install (nixos / nix-darwin)](#install-nixos--nix-darwin)
 - [Usage](#usage)
   - [Update Markdown file](#update-markdown-file)
     - [Inline config](#inline-config)
@@ -61,6 +65,34 @@ Binaries for Linux and MacOS can be downloaded from the [release page](https://g
 
 Windows Binaries are not yet build automatically, see [#7](https://github.com/KevinGimbel/mktoc/issues/7).
 
+### Hermit
+
+`mktoc` is available in [hermit](https://github.com/cashapp/hermit) so it can be installed on a per-project basis without the need to install it globally.
+
+```sh
+$ hermit init
+$ hermit install mktoc
+```
+
+This installs `mktoc` to the local bin directory at `bin/mktoc` inside the project.
+
+### Nix
+
+`mktoc` is available in [nixpkgs](https://search.nixos.org/packages?channel=unstable&show=mktoc&query=mktoc), as of 12/2025 it is only available in nixpkgs-unstable.
+
+#### Run on demand 
+```sh
+nix run 'github:nixos/nixpkgs/nixpkgs-unstable#mktoc'
+```
+
+#### Install (nixos / nix-darwin)
+
+```nix
+environment.systemPackages = [
+  pkgs.mktoc
+];
+```
+
 ## Usage
 
 ### Update Markdown file
@@ -91,7 +123,7 @@ Inline config takes priority over environment or CLI arguments.
 
 ##### `min_depth`
 
-The minumum depth to look for, defaults to 1 which is equal to `<h1>` or `#`.
+The minimum depth to look for, defaults to 1 which is equal to `<h1>` or `#`.
 
 ##### `max_depth`
 
@@ -227,7 +259,6 @@ cargo install --git https://github.com/KevinGimbel/mktoc --force --rev $COMMIT_I
 # install branch
 cargo install --git https://github.com/KevinGimbel/mktoc --force --branch $BRANCH_NAME
 ```
-
 
 ## License
 [⬆️ Back to Top](#table-of-contents)
