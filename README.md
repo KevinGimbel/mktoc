@@ -15,6 +15,7 @@
 - [Installation](#installation)
   - [Cargo](#cargo)
   - [Binary](#binary)
+  - [Hermit](#hermit)
   - [Nix](#nix)
     - [Run on demand ](#run-on-demand)
     - [Install (nixos / nix-darwin)](#install-nixos--nix-darwin)
@@ -63,6 +64,17 @@ $ cargo install --force mktoc
 Binaries for Linux and MacOS can be downloaded from the [release page](https://github.com/KevinGimbel/mktoc/releases/latest).
 
 Windows Binaries are not yet build automatically, see [#7](https://github.com/KevinGimbel/mktoc/issues/7).
+
+### Hermit
+
+`mktoc` is available in [hermit](https://github.com/cashapp/hermit) so it can be installed on a per-project basis without the need to install it globally.
+
+```sh
+$ hermit init
+$ hermit install mktoc
+```
+
+This installs `mktoc` to the local bin directory at `bin/mktoc` inside the project.
 
 ### Nix
 
