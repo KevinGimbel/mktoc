@@ -123,7 +123,7 @@ Inline config takes priority over environment or CLI arguments.
 
 ##### `min_depth`
 
-The minumum depth to look for, defaults to 1 which is equal to `<h1>` or `#`.
+The minimum depth to look for, defaults to 1 which is equal to `<h1>` or `#`.
 
 ##### `max_depth`
 
@@ -259,7 +259,6 @@ cargo install --git https://github.com/KevinGimbel/mktoc --force --rev $COMMIT_I
 # install branch
 cargo install --git https://github.com/KevinGimbel/mktoc --force --branch $BRANCH_NAME
 ```
-
 
 ## License
 [⬆️ Back to Top](#table-of-contents)

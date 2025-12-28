@@ -3,6 +3,7 @@
 # private is used so these two don't show up in the --list output
 [private]
 default: list
+
 [private]
 list:
     just --list
@@ -13,17 +14,21 @@ dev:
 
 # Run benchmarks with criterion
 bench:
-	cargo bench
+    cargo bench
+
+# Run coverage script and update badge
+coverage:
+    ./helpers/coverage.sh
 
 # Run cargo build with --release flag to build the binary
 build:
-	cargo build --release
+    cargo build --release
 
 # Build the wasm code
 build-web:
-	cd wasm && wasm-pack build --release --target web --out-dir pkg
+    cd wasm && wasm-pack build --release --target web --out-dir pkg
 
 # Publish the wasm code as npm package
 publish-web:
-	cd wasm && wasm-pack pack
-	cd wasm && wasm-pack publish --target web
+    cd wasm && wasm-pack pack
+    cd wasm && wasm-pack publish --target web
