@@ -39,7 +39,6 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: cachix/install-nix-action@v26
-      - name: Building package
         run: nix develop --command bash -c 'cargo build --release'
       - uses: taiki-e/upload-rust-binary-action@v1
         with:
