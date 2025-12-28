@@ -78,9 +78,10 @@ This installs `mktoc` to the local bin directory at `bin/mktoc` inside the proje
 
 ### Nix
 
-`mktoc` is available in [nixpkgs](https://search.nixos.org/packages?channel=unstable&show=mktoc&query=mktoc), as of 12/2025 it is only available in nixpkgs-unstable.
+`mktoc` is available in [nixpkgs](https://search.nixos.org/packages?channel=unstable&show=mktoc&query=mktoc) since version 25.11.
 
 #### Run on demand 
+
 ```sh
 nix run 'github:nixos/nixpkgs/nixpkgs-unstable#mktoc'
 ```
@@ -215,12 +216,12 @@ Install the extension and then add the following config to workspace or user `se
 
 ```json
 "emeraldwalk.runonsave": {
-    "commands": [
-        {
-            "match": "\\.md$",
-            "cmd": "mktoc ${file}"
-        }
-    ]
+  "commands": [
+    {
+      "match": "\\.md$",
+      "cmd": "mktoc ${file}"
+    }
+  ]
 }
 ```
 
@@ -248,6 +249,8 @@ Here are some good places to start:
 
 - [mktoc](https://github.com/KevinGimbel/mktoc) is used for table of content generation in the README.md (neat!)
 - [criterion](https://github.com/bheisler/criterion.rs) for benchmarking
+- [just]([https://](https://github.com/casey/just)) is used as task runner
+- [nix](https://nix.dev) is used for keeping dev tools versions equal across CI and local setups
 
 ### Install dev build
 
