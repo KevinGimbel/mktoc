@@ -11,4 +11,5 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: cachix/install-nix-action@v26
-        run: nix develop --command bash -c 'cargo test'
+      - name: Run clippy
+        run: nix develop --command bash -c 'cargo clippy'
