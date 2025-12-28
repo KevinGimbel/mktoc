@@ -1,12 +1,13 @@
+name: Clippy
+
 on:
   push:
     branches:
       - main
   pull_request:
 
-name: Clippy check
 jobs:
-  clippy_check:
+  clippy-check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
