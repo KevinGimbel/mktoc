@@ -1,8 +1,9 @@
 # Changelog
 
-## v5.0.0-rc3
+## v5.0.0-rc6
 
-- Testing new build scripts
+- Keep `taiki-e/upload-rust-binary-action@v1` for adding the binaries to releases
+- Test release process
 
 ## v5.0.0
 
