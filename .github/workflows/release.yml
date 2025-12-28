@@ -38,8 +38,6 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v6
-      - uses: cachix/install-nix-action@v26
-        run: nix develop --command bash -c 'cargo build --release'
       - uses: taiki-e/upload-rust-binary-action@v1
         with:
           bin: mktoc
