@@ -2,9 +2,16 @@
 
 ## v5.0.0
 
+## New
+
+- mktoc has been added to `nixpkgs` and `hermit` for easier installation
+
+## Changes 
+
 - Upgrade to Rust Edition 2024 from 2021
 - add [nix](https://nix.dev/) flake for reproducible development environments
 - update to Rust to 1.91.1
+
 
 ## v4.0.0
 
