@@ -1,0 +1,16 @@
+name: Benchmark
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  bench:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: cachix/install-nix-action@v26
+      - name: Run benchmark
+        run: nix develop --command bash -c 'cargo bench'
