@@ -1,5 +1,9 @@
 # Changelog
 
+## v5.0.0-rc2
+
+- Testing new build scripts
+
 ## v5.0.0
 
 ## New
