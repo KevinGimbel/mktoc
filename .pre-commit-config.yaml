@@ -1,0 +1,5 @@
+repos:
+  - repo: https://github.com/KevinGimbel/mktoc
+    rev: 15dd6f8310d55742e0dc04f2a49c619e14bade6b
+    hooks:
+      - id: mktoc

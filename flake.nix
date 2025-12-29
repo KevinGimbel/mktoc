@@ -26,7 +26,9 @@
             rustc
             rustfmt
             rustPackages.clippy
+            # Dev Tools
             just
+            prek
 
             # WASM
             lld
