@@ -32,6 +32,7 @@
 - [Contributing](#contributing)
   - [Where to start?](#where-to-start)
   - [Tooling](#tooling)
+    - [Nix](#nix)
   - [Install dev build](#install-dev-build)
 - [License](#license)
 <!-- END mktoc -->
@@ -247,10 +248,20 @@ Here are some good places to start:
 
 ### Tooling
 
-- [mktoc](https://github.com/KevinGimbel/mktoc) is used for table of content generation in the README.md (neat!)
+#### Nix
+
+The easiest way to get up and running is using Nix (tho Nix is not easy at all 😅). Nix has a lot of documentation, the [Installation Guide](https://nix.dev/install-nix) is a good starting point. After Nix is installed on your system, the development environment can be started with `nix develop` or `just dev` (if just is installed globally).
+
+If you're new to nix or having trouble, feel free to reach out to me. I'd be more than happy to help!
+
+The nix environment includes all tools we need:
+
+- [prek](https://prek.j178.dev/) to run manage and run git hooks
+- [just](https://github.com/casey/just) to run tasks
+- [mktoc](https://github.com/KevinGimbel/mktoc) for table of content generation in the README.md (neat!)
+
+Additionally, we need the following which is managed by cargo: 
 - [criterion](https://github.com/bheisler/criterion.rs) for benchmarking
-- [just]([https://](https://github.com/casey/just)) is used as task runner
-- [nix](https://nix.dev) is used for keeping dev tools versions equal across CI and local setups
 
 ### Install dev build
 
