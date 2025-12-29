@@ -251,6 +251,7 @@ Here are some good places to start:
 - [criterion](https://github.com/bheisler/criterion.rs) for benchmarking
 - [just]([https://](https://github.com/casey/just)) is used as task runner
 - [nix](https://nix.dev) is used for keeping dev tools versions equal across CI and local setups
+- [prek](https://prek.j178.dev/) to run pre-commit hooks
 
 ### Install dev build
 
