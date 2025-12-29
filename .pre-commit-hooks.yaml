@@ -1,0 +1,6 @@
+- id: mktoc
+  name: Table of Contents
+  description: "Create table of content in file"
+  entry: mktoc
+  language: rust
+  types: [markdown]
