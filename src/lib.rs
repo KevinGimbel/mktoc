@@ -2,7 +2,6 @@ use regex::Regex;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fs::File;
-use std::hash::Hash;
 use std::io::prelude::*;
 use std::path::Path;
 
@@ -426,6 +425,26 @@ fn some_func() -> bool {}
 
 - [Test](#test)
 - [Hello](#hello)
+<!-- END mktoc -->"#,
+            },
+            TestCase {
+                name: "Can handle duplicate headings",
+                input: r#"
+# Test duplicate headings
+<!-- BEGIN mktoc -->
+<!-- END mktoc -->
+## Hello
+## Lorem
+### Lorem Ipsum
+### Lorem
+"#,
+                expected: r#"<!-- BEGIN mktoc -->
+
+- [Test duplicate headings](#test-duplicate-headings)
+- [Hello](#hello)
+- [Lorem](#lorem)
+  - [Lorem Ipsum](#lorem-ipsum)
+  - [Lorem](#lorem-1)
 <!-- END mktoc -->"#,
             },
         ];
