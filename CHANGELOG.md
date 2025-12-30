@@ -1,5 +1,24 @@
 # Changelog
 
+## v5.1.0 - 2025-12-30
+
+### Added
+
+- A pre-commit hook has been added for easy integration of mktoc into projects. It can be used like so:
+
+```yaml
+repos:
+  - repo: https://github.com/KevinGimbel/mktoc
+    rev: 5.1.0
+    hooks:
+      - id: mktoc
+```
+
+### Fixed 
+
+- Duplicate headings are rendered correctly (See [#26](https://github.com/KevinGimbel/mktoc/issues/26))
+- Exclude list for Cargo has been updated to remove unneeded files from the Cargo package
+
 ## v5.0.0 - 2025-12-28
 
 New release who this?
