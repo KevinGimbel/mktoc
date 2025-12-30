@@ -6,8 +6,19 @@ version = "5.0.0"
 authors = ["Kevin Gimbel <kevin@gimbel.dev>"]
 edition = "2024"
 repository = "https://github.com/kevingimbel/mktoc"
-exclude = [".github", "assets", "helpers", "tests", ".gitignore", "Makefile", "*.nix"]
 rust-version = "1.91.1"
+exclude = [
+    ".github",
+    "assets",
+    "benches",
+    "helpers",
+    "tests",
+    ".gitignore",
+    "*.nix",
+    ".pre-commit*",
+    "flake.lock",
+    "justfile"
+]
 
 [lib]
 name = "mktoc"
