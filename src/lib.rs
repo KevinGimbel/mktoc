@@ -1,5 +1,6 @@
 use regex::Regex;
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;
@@ -118,8 +119,10 @@ fn text_to_url(text: &str) -> String {
 pub fn generate_toc(original_content: String, config: Config) -> String {
     let mut already_found_code_open = false;
     let mut code_block_found = false;
+    let mut found_headings: HashMap<String, i64> = HashMap::new();
     let mut new_toc = String::from("");
     let re = regex::Regex::new(r"((#{1,6}\s))((.*))").unwrap();
+
     for line in original_content.lines() {
         if line.starts_with("```") {
             code_block_found = true;
@@ -145,7 +148,23 @@ pub fn generate_toc(original_content: String, config: Config) -> String {
             }
 
             let text = strip_markdown_links(caps.get(3).unwrap().as_str());
-            let link = text_to_url(text.as_str());
+            let mut link = text_to_url(text.as_str());
+
+            // check if a heading has already been found
+            match found_headings.get_key_value(&link) {
+                Some(entry) => {
+                    // if it has been found already, we count how many times
+                    found_headings.insert(link.clone(), entry.1 + 1);
+                    let new_content = found_headings.get_key_value(&link).unwrap();
+                    // the number is appended to the link
+                    link = format!("{}-{}", link, new_content.1);
+                }
+                None => {
+                    // if not found, initialize with 0
+                    found_headings.entry(link.clone()).or_insert(0);
+                }
+            }
+
             let spaces = match level {
                 3 => String::from("  "),
                 4 => String::from("    "),
@@ -406,6 +425,26 @@ fn some_func() -> bool {}
 
 - [Test](#test)
 - [Hello](#hello)
+<!-- END mktoc -->"#,
+            },
+            TestCase {
+                name: "Can handle duplicate headings",
+                input: r#"
+# Test duplicate headings
+<!-- BEGIN mktoc -->
+<!-- END mktoc -->
+## Hello
+## Lorem
+### Lorem Ipsum
+### Lorem
+"#,
+                expected: r#"<!-- BEGIN mktoc -->
+
+- [Test duplicate headings](#test-duplicate-headings)
+- [Hello](#hello)
+- [Lorem](#lorem)
+  - [Lorem Ipsum](#lorem-ipsum)
+  - [Lorem](#lorem-1)
 <!-- END mktoc -->"#,
             },
         ];
