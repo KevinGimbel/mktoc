@@ -45,3 +45,11 @@ jobs:
           target: ${{ matrix.target }}
           # (required) GitHub token for uploading assets to GitHub Releases.
           token: ${{ secrets.GITHUB_TOKEN }}
+
+  publish-crates-io:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: cachix/install-nix-action@v26
+      - name: Cargo publish
+        run: nix develop --command bash -c 'cargo publish'
