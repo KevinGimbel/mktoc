@@ -1,6 +1,6 @@
 # Changelog
 
-## v5.1.0 - 2025-12-30
+## v5.1.1 - 2025-12-30
 
 This release fixes the CI release job and updates the `Cargo.lock` file. See the previous release for fixed and changed things.
 
