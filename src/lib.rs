@@ -720,29 +720,36 @@ fn some_func() -> bool {}
     }
 
     #[test]
-    fn test_is_emoji() {
-        struct TestCase<'a> {
-            name: &'a str,
-            input: char,
+    fn test_is_emoji_fixed() {
+        struct TestCase {
+            input: Box<[char]>,
             expected: bool
         }
         let tests = [
             TestCase{
-                name: "Fixed emoji",
-                input: '🍑',
+                input: Box::new(['🍑']),
                 expected: true,
             },
             TestCase{
-                name: "Fixed emoji",
-                input: '✅',
+                input: Box::new(['✅']),
+                expected: true,
+            },
+            TestCase{
+                input: Box::new(['🥴']),
+                expected: true,
+            },
+            TestCase{
+                input: Box::new(['🆕']),
                 expected: true,
             }
         ];
 
         for test in tests {
-            dbg!(test.name);
-            let result = is_emoji(test.input);
-            assert_eq!(test.expected, result);
+            dbg!(&test.input);
+            for c in &test.input {
+                let result = is_emoji(*c);
+                assert_eq!(test.expected, result);
+            }
         }
     }
 
